@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "He Staining Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for Hematoxylin and Eosin (H&E) staining in histopathology",
+    "author": "Pathology Community",
+    "source": "https://www.pathology.org/",
+    "doi": "10.1038/s41598-019-43195-6",
+    "paper_title": "Deep learning for digital pathology image analysis",
+    "year": 2019,
+    "journal": "Scientific Reports",
+    "keywords": [
+      "imaging",
+      "pathology",
+      "histology",
+      "he_staining",
+      "medical"
+    ],
+    "use_case": "Histopathological image analysis, tissue classification, and medical imaging",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "he_staining": {
+      "type": "categorical",
+      "description": "Color scheme for Hematoxylin and Eosin (H&E) staining in histopathology",
+      "colors": {
+        "nuclei": "#000080",
+        "cytoplasm": "#FFE4E1",
+        "connective_tissue": "#F0F8FF",
+        "muscle": "#FFB6C1",
+        "blood": "#DC143C",
+        "fat": "#F0F8FF",
+        "bone": "#F5F5DC",
+        "cartilage": "#E6E6FA",
+        "nerves": "#FFD700",
+        "vessels": "#FF0000",
+        "glands": "#FF69B4",
+        "inflammation": "#FF4500"
+      },
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

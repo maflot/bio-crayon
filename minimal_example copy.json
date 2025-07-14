@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "name": "Minimal Example Collection (REQUIRED)",
+    "version": "1.0.0 (REQUIRED)",
+    "description": "What is your colormap good for? (REQUIRED)",
+    "tags": ["example", "minimal"],
+    "author": "Your Name",
+    "source": "https://example.com",
+    "doi": "10.1000/182",
+    "paper_title": "Your Paper Title",
+    "year": 2021,
+    "journal": "Your Journal",
+    "keywords": ["example", "minimal"]
+  },
+  "colormaps": {
+    "simple_categories": {
+      "type": "categorical",
+      "colors": {
+        "red": "#FF0000",
+        "green": "#00FF00",
+        "blue": "#0000FF"
+      }
+    }
+  }
+}

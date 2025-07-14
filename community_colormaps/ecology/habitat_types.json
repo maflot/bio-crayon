@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Habitat Types Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for terrestrial and aquatic habitat classification in ecological studies",
+    "author": "Ecology Community",
+    "source": "https://www.iucn.org/",
+    "doi": "10.1038/s41559-017-0129",
+    "paper_title": "Global habitat loss and extinction risk of terrestrial vertebrates",
+    "year": 2017,
+    "journal": "Nature Ecology & Evolution",
+    "keywords": [
+      "ecology",
+      "habitat",
+      "land_cover",
+      "ecosystem",
+      "conservation"
+    ],
+    "use_case": "Habitat mapping, land cover classification, and ecosystem type visualization",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "habitat_types": {
+      "type": "categorical",
+      "description": "Color scheme for terrestrial and aquatic habitat classification in ecological studies",
+      "colors": {
+        "forest": "#228B22",
+        "grassland": "#90EE90",
+        "wetland": "#4682B4",
+        "desert": "#F4A460",
+        "tundra": "#F0F8FF",
+        "marine": "#000080",
+        "coral_reef": "#FF69B4",
+        "mangrove": "#8B4513",
+        "savanna": "#DAA520",
+        "alpine": "#708090",
+        "urban": "#696969",
+        "agricultural": "#32CD32"
+      },
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

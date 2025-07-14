@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "name": "Custom Biological Colormaps",
+    "version": "1.0",
+    "description": "Example custom colormaps for biological data visualization",
+    "author": "BioCrayon User",
+    "license": "MIT",
+    "created": "2024-01-01T00:00:00Z"
+  },
+  "colormaps": {
+    "gene_expression": {
+      "type": "continuous",
+      "description": "Colormap for gene expression data with blue-white-red scheme",
+      "colors": ["#0000FF", "#FFFFFF", "#FF0000"],
+      "positions": [0.0, 0.5, 1.0],
+      "interpolation": "linear"
+    },
+    "cell_types": {
+      "type": "categorical",
+      "description": "Discrete colors for different cell types",
+      "colors": {
+        "neuron": "#FF6B6B",
+        "glia": "#4ECDC4",
+        "endothelial": "#45B7D1",
+        "immune": "#96CEB4",
+        "stem": "#FFEAA7"
+      }
+    },
+    "protein_abundance": {
+      "type": "continuous",
+      "description": "Colormap for protein abundance visualization",
+      "colors": ["#FFFFFF", "#FFFFCC", "#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "metabolic_pathways": {
+      "type": "categorical",
+      "description": "Colors for different metabolic pathways",
+      "colors": {
+        "glycolysis": "#FF6B6B",
+        "krebs_cycle": "#4ECDC4",
+        "oxidative_phosphorylation": "#45B7D1",
+        "beta_oxidation": "#96CEB4",
+        "gluconeogenesis": "#FFEAA7",
+        "pentose_phosphate": "#DDA0DD"
+      }
+    },
+    "temperature_gradient": {
+      "type": "continuous",
+      "description": "Temperature-based gradient for thermal data",
+      "colors": ["#000080", "#0000FF", "#0080FF", "#00FFFF", "#80FF80", "#FFFF00", "#FF8000", "#FF0000", "#800000"],
+      "positions": [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+      "interpolation": "linear"
+    },
+    "ph_values": {
+      "type": "continuous",
+      "description": "pH scale colormap for acid-base visualization",
+      "colors": ["#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80", "#00FFFF", "#0080FF", "#0000FF", "#8000FF", "#FF00FF"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "tissue_types": {
+      "type": "categorical",
+      "description": "Colors for different tissue types",
+      "colors": {
+        "brain": "#FF6B6B",
+        "heart": "#4ECDC4",
+        "liver": "#45B7D1",
+        "lung": "#96CEB4",
+        "kidney": "#FFEAA7",
+        "muscle": "#DDA0DD",
+        "bone": "#98D8C8",
+        "skin": "#F7DC6F"
+      }
+    },
+    "fluorescence_channels": {
+      "type": "categorical",
+      "description": "Standard fluorescence channel colors",
+      "colors": {
+        "DAPI": "#0000FF",
+        "FITC": "#00FF00",
+        "TRITC": "#FF0000",
+        "Cy5": "#FF00FF",
+        "Cy7": "#FFFF00"
+      }
+    }
+  }
+} 

@@ -1,0 +1,75 @@
+name: Test Core Functionality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10, 3.11]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest matplotlib numpy
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v
+
+      - name: Test examples
+        run: |
+          python examples/minimal_colormap_example.py
+
+      - name: Test community colormaps
+        run: |
+          python test_allen_brain_colormaps.py
+          python test_allen_immune_colormaps.py
+
+      - name: Test package import
+        run: |
+          python -c "import bio_crayon; print('✅ Package imports successfully')"
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install linting dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8
+
+      - name: Check code formatting
+        run: |
+          black --check --diff bio_crayon/ tests/ examples/
+
+      - name: Lint with flake8
+        run: |
+          flake8 bio_crayon/ tests/ examples/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 bio_crayon/ tests/ examples/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics 

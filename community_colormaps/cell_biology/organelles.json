@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Organelles Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for cellular organelles in electron microscopy and cell biology studies",
+    "author": "Cell Biology Community",
+    "source": "https://www.cell.com/",
+    "doi": "10.1016/j.cell.2016.02.049",
+    "paper_title": "The cell biology of mitochondrial membrane dynamics",
+    "year": 2016,
+    "journal": "Cell",
+    "keywords": [
+      "cell_biology",
+      "organelles",
+      "microscopy",
+      "subcellular",
+      "localization"
+    ],
+    "use_case": "Cellular organelle identification and subcellular localization studies",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "organelles": {
+      "type": "categorical",
+      "description": "Color scheme for cellular organelles in electron microscopy and cell biology studies",
+      "colors": {
+        "nucleus": "#FF6B6B",
+        "mitochondria": "#4ECDC4",
+        "endoplasmic_reticulum": "#45B7D1",
+        "golgi_apparatus": "#96CEB4",
+        "lysosomes": "#FFEAA7",
+        "peroxisomes": "#DDA0DD",
+        "chloroplasts": "#98D8C8",
+        "vacuoles": "#F7DC6F",
+        "ribosomes": "#BB8FCE",
+        "cytoskeleton": "#85C1E9",
+        "plasma_membrane": "#F8C471",
+        "nucleolus": "#A9CCE3"
+      },
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "name": "Expression Heatmaps Collection",
+    "version": "1.0.0",
+    "description": "",
+    "author": "Community Contributor",
+    "source": "",
+    "doi": "",
+    "paper_title": "RNA sequencing: the teenage years",
+    "year": 2019,
+    "journal": "Nature Reviews Genetics",
+    "keywords": [
+      "genomics",
+      "expression",
+      "heatmap",
+      "rna_seq",
+      "differential_expression"
+    ],
+    "use_case": "",
+    "accessibility": {}
+  },
+  "colormaps": {
+    "expression_heatmaps": {
+      "type": "categorical",
+      "description": "",
+      "colors": {},
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

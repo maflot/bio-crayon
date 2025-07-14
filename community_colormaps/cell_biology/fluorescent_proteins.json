@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Fluorescent Proteins Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for common fluorescent proteins used in cell biology imaging",
+    "author": "Cell Biology Community",
+    "source": "https://www.fpbase.org/",
+    "doi": "10.1038/nmeth.2838",
+    "paper_title": "A guide to choosing fluorescent proteins",
+    "year": 2005,
+    "journal": "Nature Methods",
+    "keywords": [
+      "cell_biology",
+      "fluorescence",
+      "proteins",
+      "microscopy",
+      "imaging"
+    ],
+    "use_case": "Multi-channel fluorescence microscopy and protein localization studies",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "fluorescent_proteins": {
+      "type": "categorical",
+      "description": "Color scheme for common fluorescent proteins used in cell biology imaging",
+      "colors": {
+        "gfp": "#00FF00",
+        "rfp": "#FF0000",
+        "cfp": "#00FFFF",
+        "yfp": "#FFFF00",
+        "mcherry": "#FF4500",
+        "mvenus": "#FFFF00",
+        "mcerulean": "#00BFFF",
+        "mtagbfp": "#0000FF",
+        "mko": "#FF8C00",
+        "mplum": "#800080",
+        "mapple": "#FF1493",
+        "mstrawberry": "#FF6347"
+      },
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

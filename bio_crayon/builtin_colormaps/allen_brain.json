@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "name": "Allen Brain Atlas",
+    "version": "1.0",
+    "description": "Colormaps for brain atlas visualization based on the Allen Brain Atlas",
+    "author": "Allen Institute for Brain Science",
+    "license": "CC BY 4.0",
+    "created": "2024-01-01T00:00:00Z"
+  },
+  "colormaps": {
+    "brain_regions": {
+      "type": "categorical",
+      "description": "Discrete colors for different brain regions",
+      "colors": {
+        "cortex": "#FF6B6B",
+        "hippocampus": "#4ECDC4",
+        "cerebellum": "#45B7D1",
+        "thalamus": "#96CEB4",
+        "hypothalamus": "#FFEAA7",
+        "amygdala": "#DDA0DD",
+        "brainstem": "#98D8C8",
+        "striatum": "#F7DC6F",
+        "pallidum": "#BB8FCE",
+        "white_matter": "#F8F9F9"
+      }
+    },
+    "activity_heatmap": {
+      "type": "continuous",
+      "description": "Continuous colormap for activity/expression heatmaps",
+      "colors": ["#000080", "#0080FF", "#00FF80", "#FFFF00", "#FF8000", "#FF0000"],
+      "positions": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+      "interpolation": "linear"
+    },
+    "expression_levels": {
+      "type": "continuous",
+      "description": "Colormap for gene expression levels",
+      "colors": ["#FFFFFF", "#FFFFCC", "#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "connectivity": {
+      "type": "continuous",
+      "description": "Colormap for connectivity strength visualization",
+      "colors": ["#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFCC", "#FEE090", "#FDAE61", "#F46D43", "#D73027", "#A50026"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    }
+  }
+} 

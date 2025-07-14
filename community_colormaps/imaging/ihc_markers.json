@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Ihc Markers Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for immunohistochemistry (IHC) markers in tissue staining",
+    "author": "Immunology Community",
+    "source": "https://www.immunology.org/",
+    "doi": "10.1038/nri.2016.49",
+    "paper_title": "Immunohistochemistry for the diagnosis of lymphoma",
+    "year": 2016,
+    "journal": "Nature Reviews Immunology",
+    "keywords": [
+      "imaging",
+      "immunology",
+      "ihc",
+      "markers",
+      "tissue"
+    ],
+    "use_case": "Immunohistochemistry analysis, immune cell identification, and tissue marker visualization",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "ihc_markers": {
+      "type": "categorical",
+      "description": "Color scheme for immunohistochemistry (IHC) markers in tissue staining",
+      "colors": {
+        "cd3": "#FF0000",
+        "cd4": "#00FF00",
+        "cd8": "#0000FF",
+        "cd20": "#FFFF00",
+        "cd68": "#FF00FF",
+        "ki67": "#00FFFF",
+        "p53": "#FFA500",
+        "her2": "#800080",
+        "er": "#FF69B4",
+        "pr": "#FF1493",
+        "p16": "#32CD32",
+        "p63": "#FF4500"
+      },
+      "positions": [],
+      "interpolation": "linear"
+    }
+  }
+}

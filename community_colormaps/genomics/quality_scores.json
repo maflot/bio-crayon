@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "name": "Quality Scores Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for sequencing quality scores with emphasis on low-quality regions",
+    "author": "Bioinformatics Community",
+    "source": "https://www.bioinformatics.org/",
+    "doi": "10.1093/bioinformatics/btp352",
+    "paper_title": "FastQC: a quality control tool for high throughput sequence data",
+    "year": 2010,
+    "journal": "Bioinformatics",
+    "keywords": [
+      "genomics",
+      "sequencing",
+      "quality",
+      "fastq",
+      "bioinformatics"
+    ],
+    "use_case": "Sequencing quality visualization, FASTQ quality scores, and quality control analysis",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "quality_scores": {
+      "type": "continuous",
+      "description": "Color scheme for sequencing quality scores with emphasis on low-quality regions",
+      "colors": [
+        "#FF0000",
+        "#FFFF00",
+        "#00FF00"
+      ],
+      "positions": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "interpolation": "linear"
+    }
+  }
+}

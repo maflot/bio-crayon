@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "name": "Biodiversity Collection",
+    "version": "1.0.0",
+    "description": "Color scheme for biodiversity indices and species richness visualization",
+    "author": "Ecology Community",
+    "source": "https://www.nature.com/subjects/ecology",
+    "doi": "10.1038/nature11148",
+    "paper_title": "Global patterns of biodiversity",
+    "year": 2012,
+    "journal": "Nature",
+    "keywords": [
+      "ecology",
+      "biodiversity",
+      "species_richness",
+      "conservation",
+      "mapping"
+    ],
+    "use_case": "Biodiversity mapping, species richness visualization, and ecological diversity analysis",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": [
+        "deuteranopia",
+        "protanopia",
+        "tritanopia"
+      ]
+    }
+  },
+  "colormaps": {
+    "biodiversity": {
+      "type": "continuous",
+      "description": "Color scheme for biodiversity indices and species richness visualization",
+      "colors": [
+        "#FFFFFF",
+        "#FFFF00",
+        "#00FF00",
+        "#008000"
+      ],
+      "positions": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "interpolation": "linear"
+    }
+  }
+}
