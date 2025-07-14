@@ -1,6 +1,6 @@
 # BioCrayon
 
-![BioCrayon Logo](logo.png)
+![BioCrayon Logo](logo_small.png)
 ![pypi](https://img.shields.io/pypi/v/bio-crayon)
 
 A community-driven Python package for managing biological data colormaps with support for both categorical and continuous color mappings.
