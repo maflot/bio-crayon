@@ -1,8 +1,11 @@
-# BioCrayon 🌈
+# BioCrayon
+
+![BioCrayon Logo](https://github.com/maflot/bio-crayon/blob/main/bio_crayon/logo.png)
+![pypi](https://img.shields.io/pypi/v/bio-crayon)
 
 A community-driven Python package for managing biological data colormaps with support for both categorical and continuous color mappings.
 
-## 🌟 Community-Driven Architecture
+## Community-Driven Architecture
 
 BioCrayon follows a community-driven approach with:
 
@@ -81,7 +84,7 @@ black bio_crayon/ tests/ examples/
 flake8 bio_crayon/ tests/ examples/
 ```
 
-## 🧪 Testing
+## Testing
 
 BioCrayon includes comprehensive testing:
 
@@ -102,7 +105,7 @@ python test_allen_immune_colormaps.py
 - **Test Core**: Essential functionality testing
 - **Validate Colormaps**: Community colormap validation
 
-## 📦 Installation
+## Installation
 
 ### From PyPI
 COMING SOON
@@ -117,7 +120,7 @@ cd bio-crayon
 pip install -e .
 ```
 
-## 📚 Examples
+## Examples
 
 ### Basic Usage
 ```python
@@ -180,7 +183,7 @@ bc.get_color("my_colors", "red")
 # get colorblind safe colormap
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core Components
 - **`bio_crayon/core.py`**: Main BioCrayon class
@@ -199,30 +202,30 @@ community_colormaps/
 └── imaging/               # Medical imaging
 ```
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## 🤝 Acknowledgments
+## Acknowledgments
 
 - **Allen Institute for Brain Science**: Brain atlas colormaps
 - **Allen Institute for Immunology**: Immune cell colormaps, Claire E. Gustafson (ORCiD 0000-0002-1437-6709) and [Heidi Gustafson](https://earlyfutures.com/) for the single cell colormaps
 - **Community Contributors**: Scientific colormap collections
 
-## 📖 Citation
+## Citation
 
 If you use BioCrayon in your research, please cite:
 
 ```
 BioCrayon: A Python package for managing biological data colormaps
 Your Name, 2024
-https://github.com/yourusername/bio-crayon
+https://github.com/maflot/bio-crayon
 ```
 
-## 🔗 Links
+## Links
 
 - **Documentation**: [Coming soon]
 - **PyPI**: [Coming soon]
-- **GitHub**: https://github.com/yourusername/bio-crayon
-- **Issues**: https://github.com/yourusername/bio-crayon/issues
-- **Discussions**: https://github.com/yourusername/bio-crayon/discussions
+- **GitHub**: https://github.com/maflot/bio-crayon
+- **Issues**: https://github.com/maflot/bio-crayon/issues
+- **Discussions**: https://github.com/maflot/bio-crayon/discussions
