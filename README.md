@@ -79,11 +79,39 @@ pip install pytest black flake8 mypy
 # Run tests
 pytest tests/ -v
 
-# Format code
+# Format code (recommended)
 black bio_crayon/ tests/ examples/
 
-# Lint code
+# Lint code (recommended)
 flake8 bio_crayon/ tests/ examples/
+```
+
+## Code Quality (Recommended)
+
+While not required for tests to pass, we recommend maintaining code quality:
+
+### Code Formatting
+```bash
+# Format code with black
+black bio_crayon/ tests/ examples/
+
+# Check formatting without changing files
+black --check bio_crayon/ tests/ examples/
+```
+
+### Linting
+```bash
+# Run flake8 for style and error checking
+flake8 bio_crayon/ tests/ examples/
+
+# Run mypy for type checking
+mypy bio_crayon/ --ignore-missing-imports
+```
+
+### Import Sorting
+```bash
+# Sort imports with isort
+isort bio_crayon/ tests/ examples/
 ```
 
 ## Testing

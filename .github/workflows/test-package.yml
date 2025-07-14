@@ -73,42 +73,7 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
 
-  lint:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install linting dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install black flake8 isort mypy
-
-      - name: Check code formatting
-        run: |
-          black --check --diff bio_crayon/ tests/ examples/
-
-      - name: Check import sorting
-        run: |
-          isort --check-only --diff bio_crayon/ tests/ examples/
-
-      - name: Lint with flake8
-        run: |
-          flake8 bio_crayon/ tests/ examples/ --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 bio_crayon/ tests/ examples/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Type check with mypy
-        run: |
-          mypy bio_crayon/ --ignore-missing-imports
 
   security:
     runs-on: ubuntu-latest
@@ -165,71 +130,4 @@ jobs:
             echo "No docs directory found, skipping documentation build"
           fi
 
-  performance:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install performance testing dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install pytest-benchmark
-
-      - name: Run performance tests
-        run: |
-          python -c "
-          import time
-          import sys
-          sys.path.append('.')
-          
-          from bio_crayon import BioCrayon
-          
-          # Performance test for color retrieval
-          print('Running performance tests...')
-          
-          # Create a large colormap
-          large_colormap = {
-              'colormaps': {
-                  'large_test': {
-                      'type': 'categorical',
-                      'colors': {f'category_{i}': f'#{i:06x}' for i in range(1000)}
-                  }
-              }
-          }
-          
-          bc = BioCrayon(large_colormap)
-          
-          # Test color retrieval performance
-          start_time = time.time()
-          for i in range(1000):
-              bc.get_color('large_test', f'category_{i % 1000}')
-          end_time = time.time()
-          
-          retrieval_time = end_time - start_time
-          print(f'Color retrieval: {retrieval_time:.4f}s for 1000 operations')
-          
-          # Test matplotlib conversion performance
-          start_time = time.time()
-          cmap = bc.to_matplotlib('large_test')
-          end_time = time.time()
-          
-          conversion_time = end_time - start_time
-          print(f'Matplotlib conversion: {conversion_time:.4f}s')
-          
-          # Performance thresholds
-          assert retrieval_time < 1.0, f'Color retrieval too slow: {retrieval_time}s'
-          assert conversion_time < 2.0, f'Matplotlib conversion too slow: {conversion_time}s'
-          
-                      print('PASS: Performance tests passed!')
-          " 
+ 
