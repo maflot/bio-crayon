@@ -11,29 +11,46 @@ import matplotlib.colors as mcolors
 import numpy as np
 
 from .utils import (
-    load_from_file, load_from_url, load_from_dict, detect_source_type,
-    hex_to_rgb, rgb_to_hex, interpolate_colors, normalize_color,
-    interpolate_color_lab, is_colorblind_safe, get_colorblind_safe_colors
+    load_from_file,
+    load_from_url,
+    load_from_dict,
+    detect_source_type,
+    hex_to_rgb,
+    rgb_to_hex,
+    interpolate_colors,
+    normalize_color,
+    interpolate_color_lab,
+    is_colorblind_safe,
+    get_colorblind_safe_colors,
 )
 from .validators import (
-    validate_colormap_data, validate_colormap_name, validate_hex_color,
-    validate_categorical_colormap, validate_continuous_colormap,
-    validate_expression_range, validate_colorblind_safety, validate_bio_specific_requirements
+    validate_colormap_data,
+    validate_colormap_name,
+    validate_hex_color,
+    validate_categorical_colormap,
+    validate_continuous_colormap,
+    validate_expression_range,
+    validate_colorblind_safety,
+    validate_bio_specific_requirements,
 )
 
 
 class BioCrayon:
     """
     Main class for managing biological data colormaps.
-    
+
     Supports loading colormaps from files, URLs, or dictionaries,
     and provides methods for accessing and converting colormaps.
     """
-    
-    def __init__(self, source: Optional[Union[str, Path, Dict[str, Any]]] = None, require_metadata: bool = False):
+
+    def __init__(
+        self,
+        source: Optional[Union[str, Path, Dict[str, Any]]] = None,
+        require_metadata: bool = False,
+    ):
         """
         Initialize BioCrayon with optional source.
-        
+
         Args:
             source: File path, URL, or dictionary containing colormap data
             require_metadata: Whether metadata is required (True for community colormaps)
@@ -41,101 +58,107 @@ class BioCrayon:
         self._data = {"metadata": {}, "colormaps": {}}
         self._metadata = {}
         self._colormaps = {}
-        
+
         if source is not None:
             self.load(source, require_metadata=require_metadata)
-    
-    def load(self, source: Union[str, Path, Dict[str, Any]], require_metadata: bool = False) -> None:
+
+    def load(
+        self, source: Union[str, Path, Dict[str, Any]], require_metadata: bool = False
+    ) -> None:
         """
         Load colormap data from source.
-        
+
         Args:
             source: File path, URL, or dictionary containing colormap data
             require_metadata: Whether metadata is required (True for community colormaps)
-            
+
         Raises:
             ValueError: If source is invalid or validation fails
             FileNotFoundError: If file doesn't exist
             requests.RequestException: If URL request fails
         """
         source_type = detect_source_type(source)
-        
+
         if source_type == "file":
             data = load_from_file(source)
         elif source_type == "url":
             data = load_from_url(source)
         else:  # dict
             data = load_from_dict(source)
-        
+
         # Validate the data
         errors = validate_colormap_data(data, require_metadata=require_metadata)
         if errors:
             raise ValueError(f"Invalid colormap data:\n" + "\n".join(errors))
-        
+
         # Store the data
         self._data = data
         self._metadata = data.get("metadata", {})
         self._colormaps = data.get("colormaps", {})
-    
+
     def get_colormap(self, name: str) -> Dict[str, Any]:
         """
         Get a specific colormap by name.
-        
+
         Args:
             name: Name of the colormap
-            
+
         Returns:
             Dictionary containing colormap data
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         if name not in self._colormaps:
             available = list(self._colormaps.keys())
             raise KeyError(f"Colormap '{name}' not found. Available: {available}")
-        
+
         return self._colormaps[name]
-    
+
     def get_color(self, colormap_name: str, key_or_value: Union[str, float]) -> str:
         """
         Get color for categorical key or continuous value.
-        
+
         Args:
             colormap_name: Name of the colormap
             key_or_value: Category name (for categorical) or value (for continuous)
-            
+
         Returns:
             Hex color string
-            
+
         Raises:
             KeyError: If colormap or category doesn't exist
             ValueError: If value is out of range for continuous colormap
         """
         colormap = self.get_colormap(colormap_name)
         colormap_type = colormap["type"]
-        
+
         if colormap_type == "categorical":
             colors = colormap["colors"]
             if key_or_value not in colors:
                 available = list(colors.keys())
-                raise KeyError(f"Category '{key_or_value}' not found in colormap '{colormap_name}'. Available: {available}")
+                raise KeyError(
+                    f"Category '{key_or_value}' not found in colormap '{colormap_name}'. Available: {available}"
+                )
             return colors[key_or_value]
-        
+
         elif colormap_type == "continuous":
             colors = colormap["colors"]
             positions = colormap["positions"]
-            
+
             if not isinstance(key_or_value, (int, float)):
-                raise ValueError(f"Value must be numeric for continuous colormap: {key_or_value}")
-            
+                raise ValueError(
+                    f"Value must be numeric for continuous colormap: {key_or_value}"
+                )
+
             value = float(key_or_value)
-            
+
             # Handle edge cases
             if value <= positions[0]:
                 return colors[0]
             if value >= positions[-1]:
                 return colors[-1]
-            
+
             # Find the appropriate segment
             for i in range(len(positions) - 1):
                 if positions[i] <= value <= positions[i + 1]:
@@ -143,104 +166,108 @@ class BioCrayon:
                     t = (value - positions[i]) / (positions[i + 1] - positions[i])
                     color1 = colors[i]
                     color2 = colors[i + 1]
-                    
+
                     # Simple linear interpolation
                     rgb1 = hex_to_rgb(color1)
                     rgb2 = hex_to_rgb(color2)
-                    
+
                     r = int(round(rgb1[0] * (1 - t) + rgb2[0] * t))
                     g = int(round(rgb1[1] * (1 - t) + rgb2[1] * t))
                     b = int(round(rgb1[2] * (1 - t) + rgb2[2] * t))
-                    
+
                     return rgb_to_hex(r, g, b)
-            
+
             # Should not reach here
             raise ValueError(f"Could not interpolate value {value}")
-        
+
         else:
             raise ValueError(f"Unknown colormap type: {colormap_type}")
-    
+
     def list_colormaps(self) -> List[str]:
         """
         List available colormaps.
-        
+
         Returns:
             List of colormap names
         """
         return list(self._colormaps.keys())
-    
-    def to_matplotlib(self, colormap_name: str, n_colors: int = 256) -> mcolors.Colormap:
+
+    def to_matplotlib(
+        self, colormap_name: str, n_colors: int = 256
+    ) -> mcolors.Colormap:
         """
         Convert colormap to matplotlib Colormap object.
-        
+
         Args:
             colormap_name: Name of the colormap
             n_colors: Number of colors in the matplotlib colormap
-            
+
         Returns:
             matplotlib.colors.Colormap object
-            
+
         Raises:
             KeyError: If colormap doesn't exist
             ValueError: If colormap type is not supported for matplotlib conversion
         """
         colormap = self.get_colormap(colormap_name)
         colormap_type = colormap["type"]
-        
+
         if colormap_type == "continuous":
             colors = colormap["colors"]
             positions = colormap["positions"]
-            
+
             # Convert hex colors to RGB (0-1 range)
             rgb_colors = []
             for color in colors:
                 r, g, b = hex_to_rgb(color)
-                rgb_colors.append([r/255, g/255, b/255])
-            
+                rgb_colors.append([r / 255, g / 255, b / 255])
+
             # Create matplotlib colormap
             cmap = mcolors.LinearSegmentedColormap.from_list(
                 colormap_name, list(zip(positions, rgb_colors)), N=n_colors
             )
             return cmap
-        
+
         elif colormap_type == "categorical":
             colors = colormap["colors"]
-            
+
             # For categorical, create a discrete colormap
             color_list = list(colors.values())
             rgb_colors = []
             for color in color_list:
                 r, g, b = hex_to_rgb(color)
-                rgb_colors.append([r/255, g/255, b/255])
-            
+                rgb_colors.append([r / 255, g / 255, b / 255])
+
             # Create discrete colormap
             cmap = mcolors.ListedColormap(rgb_colors, name=colormap_name)
             return cmap
-        
+
         else:
-            raise ValueError(f"Cannot convert colormap type '{colormap_type}' to matplotlib")
-    
+            raise ValueError(
+                f"Cannot convert colormap type '{colormap_type}' to matplotlib"
+            )
+
     def add_colormap(self, name: str, colormap_data: Dict[str, Any]) -> None:
         """
         Add a new colormap.
-        
+
         Args:
             name: Name for the new colormap
             colormap_data: Dictionary containing colormap data
-            
+
         Raises:
             ValueError: If name is invalid or colormap data is invalid
         """
         if not validate_colormap_name(name):
             raise ValueError(f"Invalid colormap name: {name}")
-        
+
         if name in self._colormaps:
             raise ValueError(f"Colormap '{name}' already exists")
-        
+
         # Validate the colormap data
         if "type" not in colormap_data:
             raise ValueError("Colormap data must have 'type' field")
-        
+
         colormap_type = colormap_data["type"]
         if colormap_type == "categorical":
             errors = validate_categorical_colormap(colormap_data)
@@ -248,22 +275,22 @@ class BioCrayon:
             errors = validate_continuous_colormap(colormap_data)
         else:
             raise ValueError(f"Unknown colormap type: {colormap_type}")
-        
+
         if errors:
             raise ValueError(f"Invalid colormap data:\n" + "\n".join(errors))
-        
+
         # Add the colormap
         self._colormaps[name] = colormap_data
         self._data["colormaps"] = self._colormaps
-    
+
     def save(self, filepath: Union[str, Path], require_metadata: bool = False) -> None:
         """
         Save current colormaps to file.
-        
+
         Args:
             filepath: Path to save the JSON file
             require_metadata: Whether metadata is required (True for community colormaps)
-            
+
         Raises:
             ValueError: If data is invalid
         """
@@ -271,30 +298,30 @@ class BioCrayon:
         errors = validate_colormap_data(self._data, require_metadata=require_metadata)
         if errors:
             raise ValueError(f"Invalid data structure:\n" + "\n".join(errors))
-        
+
         filepath = Path(filepath)
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(self._data, f, indent=2)
-    
+
     def get_metadata(self) -> Dict[str, Any]:
         """
         Get metadata about the colormap collection.
-        
+
         Returns:
             Dictionary containing metadata
         """
         return self._metadata.copy()
-    
+
     def get_colormap_info(self, name: str) -> Dict[str, Any]:
         """
         Get information about a specific colormap.
-        
+
         Args:
             name: Name of the colormap
-            
+
         Returns:
             Dictionary containing colormap information
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
@@ -302,9 +329,9 @@ class BioCrayon:
         info = {
             "name": name,
             "type": colormap["type"],
-            "description": colormap.get("description", "")
+            "description": colormap.get("description", ""),
         }
-        
+
         if colormap["type"] == "categorical":
             info["categories"] = list(colormap["colors"].keys())
             info["num_categories"] = len(colormap["colors"])
@@ -312,58 +339,58 @@ class BioCrayon:
             info["num_colors"] = len(colormap["colors"])
             info["range"] = (colormap["positions"][0], colormap["positions"][-1])
             info["interpolation"] = colormap.get("interpolation", "linear")
-        
+
         return info
-    
+
     def plot_colormap(self, name: str, figsize: Tuple[int, int] = (8, 2)) -> None:
         """
         Plot a colormap for visualization.
-        
+
         Args:
             name: Name of the colormap
             figsize: Figure size (width, height)
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         colormap = self.get_colormap(name)
         colormap_type = colormap["type"]
-        
+
         fig, ax = plt.subplots(figsize=figsize)
-        
+
         if colormap_type == "categorical":
             colors = colormap["colors"]
             categories = list(colors.keys())
             color_values = list(colors.values())
-            
+
             # Create color patches
             for i, (category, color) in enumerate(zip(categories, color_values)):
                 ax.bar(i, 1, color=color, label=category)
-            
+
             ax.set_xlabel("Categories")
             ax.set_ylabel("Color")
             ax.set_title(f"Categorical Colormap: {name}")
             ax.set_xticks(range(len(categories)))
             ax.set_xticklabels(categories, rotation=45)
             ax.legend()
-        
+
         else:  # continuous
             colors = colormap["colors"]
             positions = colormap["positions"]
-            
+
             # Create gradient
             for i in range(len(positions) - 1):
                 x_start = positions[i]
                 x_end = positions[i + 1]
                 color_start = colors[i]
                 color_end = colors[i + 1]
-                
+
                 # Interpolate colors for smooth gradient
                 n_steps = 50
                 for j in range(n_steps):
                     t = j / n_steps
                     x = x_start + t * (x_end - x_start)
-                    
+
                     # Interpolate color
                     rgb1 = hex_to_rgb(color_start)
                     rgb2 = hex_to_rgb(color_end)
@@ -371,171 +398,181 @@ class BioCrayon:
                     g = int(rgb1[1] + t * (rgb2[1] - rgb1[1]))
                     b = int(rgb1[2] + t * (rgb2[2] - rgb1[2]))
                     color = rgb_to_hex(r, g, b)
-                    
+
                     ax.bar(x, 1, color=color, width=(x_end - x_start) / n_steps)
-            
+
             ax.set_xlabel("Position")
             ax.set_ylabel("Color")
             ax.set_title(f"Continuous Colormap: {name}")
             ax.set_xlim(0, 1)
-        
+
         plt.tight_layout()
         plt.show()
-    
+
     def __len__(self) -> int:
         """Return number of colormaps."""
         return len(self._colormaps)
-    
+
     def __contains__(self, name: str) -> bool:
         """Check if colormap exists."""
         return name in self._colormaps
-    
+
     def __iter__(self):
         """Iterate over colormap names."""
         return iter(self._colormaps.keys())
-    
-    def validate_expression_range(self, colormap_name: str, min_val: float, max_val: float) -> List[str]:
+
+    def validate_expression_range(
+        self, colormap_name: str, min_val: float, max_val: float
+    ) -> List[str]:
         """
         Validate that a continuous colormap covers the expected expression range.
-        
+
         Args:
             colormap_name: Name of the colormap to validate
             min_val: Expected minimum value in the data
             max_val: Expected maximum value in the data
-            
+
         Returns:
             List of validation error messages (empty if valid)
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         colormap = self.get_colormap(colormap_name)
         return validate_expression_range(colormap, min_val, max_val)
-    
-    def is_colorblind_safe(self, colormap_name: str, colorblind_type: str = "deuteranopia") -> bool:
+
+    def is_colorblind_safe(
+        self, colormap_name: str, colorblind_type: str = "deuteranopia"
+    ) -> bool:
         """
         Check if categorical colormap is distinguishable for colorblind users.
-        
+
         Args:
             colormap_name: Name of the colormap to check
             colorblind_type: Type of colorblindness to check for
-            
+
         Returns:
             True if colors are distinguishable for the specified colorblind type
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         colormap = self.get_colormap(colormap_name)
         if colormap["type"] != "categorical":
-            raise ValueError(f"Colorblind safety check only applies to categorical colormaps, got {colormap['type']}")
-        
+            raise ValueError(
+                f"Colorblind safety check only applies to categorical colormaps, got {colormap['type']}"
+            )
+
         colors = list(colormap["colors"].values())
         return is_colorblind_safe(colors, colorblind_type)
-    
+
     def get_colorbar(self, colormap_name: str, **kwargs) -> plt.Figure:
         """
         Return matplotlib colorbar for the colormap.
-        
+
         Args:
             colormap_name: Name of the colormap
             **kwargs: Additional arguments passed to matplotlib.colorbar.Colorbar
-            
+
         Returns:
             matplotlib Figure with colorbar
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         colormap = self.get_colormap(colormap_name)
         colormap_type = colormap["type"]
-        
+
         # Extract and remove figsize from kwargs if present
-        figsize = kwargs.pop('figsize', (1, 6))
-        
+        figsize = kwargs.pop("figsize", (1, 6))
+
         # Create a simple figure with colorbar
         fig, ax = plt.subplots(figsize=figsize)
-        
+
         if colormap_type == "continuous":
             # Create a gradient image
             colors = colormap["colors"]
             positions = colormap["positions"]
-            
+
             # Convert to matplotlib colormap
             cmap = self.to_matplotlib(colormap_name)
-            
+
             # Create gradient data
             gradient = np.linspace(0, 1, 256).reshape(-1, 1)
-            im = ax.imshow(gradient, aspect='auto', cmap=cmap)
-            
+            im = ax.imshow(gradient, aspect="auto", cmap=cmap)
+
             # Add colorbar
             cbar = plt.colorbar(im, ax=ax, **kwargs)
             cbar.set_label(colormap.get("description", colormap_name))
-            
+
         else:  # categorical
             colors = colormap["colors"]
             categories = list(colors.keys())
             color_values = list(colors.values())
-            
+
             # Create discrete colorbar
             cmap = self.to_matplotlib(colormap_name)
             norm = plt.Normalize(0, len(colors) - 1)
-            
+
             # Create gradient data
             gradient = np.arange(len(colors)).reshape(-1, 1)
-            im = ax.imshow(gradient, aspect='auto', cmap=cmap, norm=norm)
-            
+            im = ax.imshow(gradient, aspect="auto", cmap=cmap, norm=norm)
+
             # Add colorbar with category labels
             cbar = plt.colorbar(im, ax=ax, **kwargs)
             cbar.set_ticks(np.arange(len(colors)) + 0.5)
             cbar.set_ticklabels(categories)
             cbar.set_label(colormap.get("description", colormap_name))
-        
+
         ax.set_title(f"Colorbar: {colormap_name}")
         plt.tight_layout()
-        
+
         return fig
-    
+
     def get_color_lab(self, colormap_name: str, key_or_value: Union[str, float]) -> str:
         """
         Get color using LAB color space interpolation for better perceptual uniformity.
-        
+
         Args:
             colormap_name: Name of the colormap
             key_or_value: Category name (for categorical) or value (for continuous)
-            
+
         Returns:
             Hex color string
-            
+
         Raises:
             KeyError: If colormap or category doesn't exist
             ValueError: If value is out of range for continuous colormap
         """
         colormap = self.get_colormap(colormap_name)
         colormap_type = colormap["type"]
-        
+
         if colormap_type == "categorical":
             colors = colormap["colors"]
             if key_or_value not in colors:
                 available = list(colors.keys())
-                raise KeyError(f"Category '{key_or_value}' not found in colormap '{colormap_name}'. Available: {available}")
+                raise KeyError(
+                    f"Category '{key_or_value}' not found in colormap '{colormap_name}'. Available: {available}"
+                )
             return colors[key_or_value]
-        
+
         elif colormap_type == "continuous":
             colors = colormap["colors"]
             positions = colormap["positions"]
-            
+
             if not isinstance(key_or_value, (int, float)):
-                raise ValueError(f"Value must be numeric for continuous colormap: {key_or_value}")
-            
+                raise ValueError(
+                    f"Value must be numeric for continuous colormap: {key_or_value}"
+                )
+
             value = float(key_or_value)
-            
+
             # Handle edge cases
             if value <= positions[0]:
                 return colors[0]
             if value >= positions[-1]:
                 return colors[-1]
-            
+
             # Find the appropriate segment
             for i in range(len(positions) - 1):
                 if positions[i] <= value <= positions[i + 1]:
@@ -543,106 +580,112 @@ class BioCrayon:
                     t = (value - positions[i]) / (positions[i + 1] - positions[i])
                     color1 = colors[i]
                     color2 = colors[i + 1]
-                    
+
                     return interpolate_color_lab(color1, color2, t)
-            
+
             # Should not reach here
             raise ValueError(f"Could not interpolate value {value}")
-        
+
         else:
             raise ValueError(f"Unknown colormap type: {colormap_type}")
-    
-    def create_colorblind_safe_colormap(self, name: str, n_colors: int, colorblind_type: str = "deuteranopia") -> None:
+
+    def create_colorblind_safe_colormap(
+        self, name: str, n_colors: int, colorblind_type: str = "deuteranopia"
+    ) -> None:
         """
         Create a new colorblind-safe categorical colormap.
-        
+
         Args:
             name: Name for the new colormap
             n_colors: Number of colors needed
             colorblind_type: Type of colorblindness to optimize for
-            
+
         Raises:
             ValueError: If name is invalid or colormap already exists
         """
         if not validate_colormap_name(name):
             raise ValueError(f"Invalid colormap name: {name}")
-        
+
         if name in self._colormaps:
             raise ValueError(f"Colormap '{name}' already exists")
-        
+
         # Get colorblind-safe colors
         colors = get_colorblind_safe_colors(n_colors, colorblind_type)
-        
+
         # Create colormap data
         colormap_data = {
             "type": "categorical",
             "description": f"Colorblind-safe colormap for {colorblind_type} ({n_colors} colors)",
-            "colors": {f"category_{i}": color for i, color in enumerate(colors)}
+            "colors": {f"category_{i}": color for i, color in enumerate(colors)},
         }
-        
+
         # Add the colormap
         self._colormaps[name] = colormap_data
         self._data["colormaps"] = self._colormaps
-    
-    def validate_bio_requirements(self, colormap_name: str, bio_type: str = "expression") -> List[str]:
+
+    def validate_bio_requirements(
+        self, colormap_name: str, bio_type: str = "expression"
+    ) -> List[str]:
         """
         Validate colormap against biological data type requirements.
-        
+
         Args:
             colormap_name: Name of the colormap to validate
             bio_type: Type of biological data ("expression", "sequence", "structure", "pathway")
-            
+
         Returns:
             List of validation error messages (empty if valid)
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         colormap = self.get_colormap(colormap_name)
         return validate_bio_specific_requirements(colormap, bio_type)
-    
+
     @classmethod
-    def from_community(cls, category: str, name: str) -> 'BioCrayon':
+    def from_community(cls, category: str, name: str) -> "BioCrayon":
         """
         Load colormap from community registry.
-        
+
         Args:
             category: Category of the colormap (e.g., "neuroscience", "genomics")
             name: Name of the colormap file (without .json extension)
-            
+
         Returns:
             BioCrayon instance loaded with the community colormap
-            
+
         Raises:
             FileNotFoundError: If colormap doesn't exist in community collection
             ValueError: If colormap data is invalid
         """
         # Construct path to community colormap
         community_path = Path("community_colormaps") / category / f"{name}.json"
-        
+
         if not community_path.exists():
-            available_categories = [d.name for d in Path("community_colormaps").iterdir() if d.is_dir()]
+            available_categories = [
+                d.name for d in Path("community_colormaps").iterdir() if d.is_dir()
+            ]
             raise FileNotFoundError(
                 f"Community colormap '{name}' not found in category '{category}'. "
                 f"Available categories: {available_categories}"
             )
-        
+
         # Load the colormap and enforce metadata requirements
         # Load the colormap and enforce metadata requirements
         return cls(community_path, require_metadata=True)
-    
+
     @classmethod
     def list_community_colormaps(cls) -> Dict[str, List[str]]:
         """
         List all available community colormaps by category.
-        
+
         Returns:
             Dictionary mapping category names to lists of available colormap names
         """
         community_dir = Path("community_colormaps")
         if not community_dir.exists():
             return {}
-        
+
         categories = {}
         for category_dir in community_dir.iterdir():
             if category_dir.is_dir():
@@ -651,29 +694,31 @@ class BioCrayon:
                 for json_file in category_dir.glob("*.json"):
                     colormaps.append(json_file.stem)
                 categories[category_name] = sorted(colormaps)
-        
+
         return categories
-    
-    def contribute_colormap(self, name: str, category: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+
+    def contribute_colormap(
+        self, name: str, category: str, metadata: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Helper to format colormap for community contribution.
-        
+
         Args:
             name: Name for the colormap
             category: Category for the colormap
             metadata: Additional metadata for the contribution
-            
+
         Returns:
             Dictionary with contribution information and formatted colormap data
-            
+
         Raises:
             ValueError: If colormap doesn't exist or metadata is invalid
         """
         if name not in self._colormaps:
             raise ValueError(f"Colormap '{name}' not found in current instance")
-        
+
         colormap_data = self._colormaps[name].copy()
-        
+
         # Add contribution metadata
         contribution_info = {
             "name": name,
@@ -684,16 +729,16 @@ class BioCrayon:
             "doi": metadata.get("doi"),
             "use_case": metadata.get("use_case"),
             "accessibility_tested": metadata.get("accessibility_tested", False),
-            "example_provided": metadata.get("example_provided", False)
+            "example_provided": metadata.get("example_provided", False),
         }
-        
+
         # Validate accessibility if categorical
         if colormap_data["type"] == "categorical":
             colors = list(colormap_data["colors"].values())
             contribution_info["colorblind_safe"] = is_colorblind_safe(colors)
-        
+
         return {
             "colormap_data": colormap_data,
             "contribution_info": contribution_info,
-            "file_path": f"community_colormaps/{category}/{name}.json"
-        } 
+            "file_path": f"community_colormaps/{category}/{name}.json",
+        }

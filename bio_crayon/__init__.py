@@ -16,7 +16,7 @@ from .validators import validate_colormap_data
 __all__ = [
     "BioCrayon",
     "hex_to_rgb",
-    "rgb_to_hex", 
+    "rgb_to_hex",
     "interpolate_colors",
     "validate_colormap_data",
-] 
+]

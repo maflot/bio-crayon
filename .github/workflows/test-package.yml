@@ -15,11 +15,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         exclude:
           # Exclude Python 3.8 on Windows due to matplotlib compatibility issues
           - os: windows-latest
-            python-version: 3.8
+            python-version: "3.8"
 
     steps:
       - name: Checkout code
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: ["3.11"]
 
     steps:
       - name: Checkout code
@@ -168,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: ["3.11"]
 
     steps:
       - name: Checkout code
@@ -193,7 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: ["3.11"]
 
     steps:
       - name: Checkout code
@@ -223,7 +223,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: ["3.11"]
 
     steps:
       - name: Checkout code
