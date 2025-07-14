@@ -414,7 +414,11 @@ class TestMetadataRequiredValidation:
 
     def test_valid_metadata_required(self):
         """Test valid metadata for community colormaps."""
-        metadata = {"name": "Test Colormaps", "version": "1.0", "description": "Test description"}
+        metadata = {
+            "name": "Test Colormaps",
+            "version": "1.0",
+            "description": "Test description",
+        }
 
         errors = validate_metadata_required(metadata)
         assert len(errors) == 0
@@ -423,7 +427,7 @@ class TestMetadataRequiredValidation:
         """Test metadata missing name field."""
         metadata = {
             "version": "1.0",
-            "description": "Test description"
+            "description": "Test description",
             # Missing name
         }
 
@@ -435,7 +439,7 @@ class TestMetadataRequiredValidation:
         """Test metadata missing version field."""
         metadata = {
             "name": "Test Colormaps",
-            "description": "Test description"
+            "description": "Test description",
             # Missing version
         }
 
@@ -445,7 +449,11 @@ class TestMetadataRequiredValidation:
 
     def test_invalid_name_type(self):
         """Test metadata with invalid name type."""
-        metadata = {"name": 123, "version": "1.0", "description": "Test description"}  # Should be string
+        metadata = {
+            "name": 123,
+            "version": "1.0",
+            "description": "Test description",
+        }  # Should be string
 
         errors = validate_metadata_required(metadata)
         assert len(errors) == 1
@@ -453,7 +461,11 @@ class TestMetadataRequiredValidation:
 
     def test_invalid_version_format(self):
         """Test metadata with invalid version format."""
-        metadata = {"name": "Test Colormaps", "version": "invalid_version", "description": "Test description"}
+        metadata = {
+            "name": "Test Colormaps",
+            "version": "invalid_version",
+            "description": "Test description",
+        }
 
         errors = validate_metadata_required(metadata)
         assert len(errors) == 1
@@ -463,7 +475,7 @@ class TestMetadataRequiredValidation:
         """Test metadata missing description field."""
         metadata = {
             "name": "Test Colormaps",
-            "version": "1.0"
+            "version": "1.0",
             # Missing description
         }
 

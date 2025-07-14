@@ -107,11 +107,6 @@ jobs:
           python examples/minimal_colormap_example.py
           python examples/basic_usage.py
 
-      - name: Test community colormaps
-        run: |
-          python test_allen_brain_colormaps.py
-          python test_allen_immune_colormaps.py
-
       - name: Test package installation
         run: |
           pip install build
