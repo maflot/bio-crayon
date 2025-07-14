@@ -57,12 +57,12 @@ jobs:
                   # Validate with metadata requirements for community colormaps
                   validation_errors = validate_colormap_data(data, require_metadata=True)
                   if validation_errors:
-                      errors.append(f'❌ {json_file} - Validation errors: {validation_errors}')
+                      errors.append(f'ERROR: {json_file} - Validation errors: {validation_errors}')
                   else:
-                      print(f'✅ {json_file} - Valid')
+                      print(f'PASS: {json_file} - Valid')
                       
               except Exception as e:
-                  errors.append(f'❌ {json_file} - {e}')
+                  errors.append(f'ERROR: {json_file} - {e}')
           
           if errors:
               print('\\nValidation Errors:')
@@ -101,7 +101,7 @@ jobs:
                       print(f'ℹ️  {json_file} - Continuous colormap (accessibility check skipped)')
                       
               except Exception as e:
-                  errors.append(f'❌ {json_file} - {e}')
+                  errors.append(f'ERROR: {json_file} - {e}')
           
           if errors:
               print('\\nAccessibility Errors:')

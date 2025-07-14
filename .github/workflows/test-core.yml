@@ -43,7 +43,7 @@ jobs:
 
       - name: Test package import
         run: |
-          python -c "import bio_crayon; print('✅ Package imports successfully')"
+          python -c "import bio_crayon; print('PASS: Package imports successfully')"
 
   lint:
     runs-on: ubuntu-latest

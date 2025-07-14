@@ -70,7 +70,7 @@ jobs:
           }
           bc_user = BioCrayon(user_data)
           assert 'test_colors' in bc_user.list_colormaps()
-          print('✅ User colormap test passed')
+          print('PASS: User colormap test passed')
           
           # Test community colormap (metadata required)
           community_data = {
@@ -87,17 +87,17 @@ jobs:
           }
           bc_community = BioCrayon(community_data, require_metadata=True)
           assert 'test_colors' in bc_community.list_colormaps()
-          print('✅ Community colormap test passed')
+          print('PASS: Community colormap test passed')
           
           # Test color retrieval
           color = bc_user.get_color('test_colors', 'red')
           assert color == '#FF0000'
-          print('✅ Color retrieval test passed')
+          print('PASS: Color retrieval test passed')
           
           # Test matplotlib conversion
           cmap = bc_user.to_matplotlib('test_colors')
           assert cmap is not None
-          print('✅ Matplotlib conversion test passed')
+          print('PASS: Matplotlib conversion test passed')
           
           print('🎉 All integration tests passed!')
           "
@@ -117,7 +117,7 @@ jobs:
           pip install build
           python -m build --wheel
           pip install dist/*.whl
-          python -c "import bio_crayon; print('✅ Package installed successfully')"
+          python -c "import bio_crayon; print('PASS: Package installed successfully')"
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
@@ -285,5 +285,5 @@ jobs:
           assert retrieval_time < 1.0, f'Color retrieval too slow: {retrieval_time}s'
           assert conversion_time < 2.0, f'Matplotlib conversion too slow: {conversion_time}s'
           
-          print('✅ Performance tests passed!')
+                      print('PASS: Performance tests passed!')
           " 
