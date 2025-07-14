@@ -50,57 +50,8 @@ jobs:
 
       - name: Run integration tests
         run: |
-          python -c "
-          import sys
-          sys.path.append('.')
-          
-          from bio_crayon import BioCrayon
-          
-          # Test basic functionality
-          print('Testing basic functionality...')
-          
-          # Test user colormap (no metadata required)
-          user_data = {
-              'colormaps': {
-                  'test_colors': {
-                      'type': 'categorical',
-                      'colors': {'red': '#FF0000', 'green': '#00FF00'}
-                  }
-              }
-          }
-          bc_user = BioCrayon(user_data)
-          assert 'test_colors' in bc_user.list_colormaps()
-          print('PASS: User colormap test passed')
-          
-          # Test community colormap (metadata required)
-          community_data = {
-              'metadata': {
-                  'name': 'Test Collection',
-                  'version': '1.0'
-              },
-              'colormaps': {
-                  'test_colors': {
-                      'type': 'categorical',
-                      'colors': {'red': '#FF0000', 'green': '#00FF00'}
-                  }
-              }
-          }
-          bc_community = BioCrayon(community_data, require_metadata=True)
-          assert 'test_colors' in bc_community.list_colormaps()
-          print('PASS: Community colormap test passed')
-          
-          # Test color retrieval
-          color = bc_user.get_color('test_colors', 'red')
-          assert color == '#FF0000'
-          print('PASS: Color retrieval test passed')
-          
-          # Test matplotlib conversion
-          cmap = bc_user.to_matplotlib('test_colors')
-          assert cmap is not None
-          print('PASS: Matplotlib conversion test passed')
-          
-          print('🎉 All integration tests passed!')
-          "
+          pytest tests/test_core.py::TestIntegrationTests -v
+          pytest tests/test_core.py::TestCommunityColormaps -v
 
       - name: Test examples
         run: |

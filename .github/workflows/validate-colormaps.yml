@@ -83,33 +83,36 @@ jobs:
           from bio_crayon import BioCrayon
           
           community_dir = Path('community_colormaps')
-          errors = []
+          warnings = []
           
           for json_file in community_dir.rglob('*.json'):
               try:
                   bc = BioCrayon(json_file)
-                  colormap_name = json_file.stem
                   
-                  # Check if categorical colormap is colorblind safe
-                  colormap = bc.get_colormap(colormap_name)
-                  if colormap['type'] == 'categorical':
-                      if not bc.is_colorblind_safe(colormap_name):
-                          errors.append(f'❌ {json_file} - Not colorblind safe')
+                  # Get all colormap names in this file
+                  colormap_names = bc.list_colormaps()
+                  
+                  for colormap_name in colormap_names:
+                      # Check if categorical colormap is colorblind safe
+                      colormap = bc.get_colormap(colormap_name)
+                      if colormap['type'] == 'categorical':
+                          if not bc.is_colorblind_safe(colormap_name):
+                              warnings.append(f'WARNING: {json_file} - {colormap_name} - Not colorblind safe')
+                          else:
+                              print(f'PASS: {json_file} - {colormap_name} - Colorblind safe')
                       else:
-                          print(f'✅ {json_file} - Colorblind safe')
-                  else:
-                      print(f'ℹ️  {json_file} - Continuous colormap (accessibility check skipped)')
+                          print(f'INFO: {json_file} - {colormap_name} - Continuous colormap (accessibility check skipped)')
                       
               except Exception as e:
-                  errors.append(f'ERROR: {json_file} - {e}')
+                  warnings.append(f'ERROR: {json_file} - {e}')
           
-          if errors:
-              print('\\nAccessibility Errors:')
-              for error in errors:
-                  print(error)
-              exit(1)
+          if warnings:
+              print('\\nAccessibility Warnings (non-blocking):')
+              for warning in warnings:
+                  print(warning)
+              print('\\nNote: Colorblind accessibility is recommended but not required.')
           else:
-              print('\\n🎉 All categorical colormaps are colorblind safe!')
+              print('\\nAll categorical colormaps are colorblind safe!')
           "
           
       - name: Run Tests

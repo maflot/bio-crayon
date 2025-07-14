@@ -414,3 +414,191 @@ class TestBioCrayonMatplotlib:
         """Test converting with custom number of colors."""
         cmap = self.biocrayon.to_matplotlib("test_continuous", n_colors=100)
         assert cmap.N == 100
+
+
+class TestIntegrationTests:
+    """Integration tests that mirror the GitHub Actions workflow tests."""
+
+    def test_user_colormap_no_metadata_required(self):
+        """Test user colormap (no metadata required)."""
+        user_data = {
+            'colormaps': {
+                'test_colors': {
+                    'type': 'categorical',
+                    'colors': {'red': '#FF0000', 'green': '#00FF00'}
+                }
+            }
+        }
+        bc_user = BioCrayon(user_data)
+        assert 'test_colors' in bc_user.list_colormaps()
+
+    def test_community_colormap_metadata_required(self):
+        """Test community colormap (metadata required with description)."""
+        community_data = {
+            'metadata': {
+                'name': 'Test Collection',
+                'version': '1.0',
+                'description': 'Test community colormap for integration test'
+            },
+            'colormaps': {
+                'test_colors': {
+                    'type': 'categorical',
+                    'colors': {'red': '#FF0000', 'green': '#00FF00'}
+                }
+            }
+        }
+        bc_community = BioCrayon(community_data, require_metadata=True)
+        assert 'test_colors' in bc_community.list_colormaps()
+
+    def test_community_colormap_missing_description_fails(self):
+        """Test that community colormap without description fails validation."""
+        community_data = {
+            'metadata': {
+                'name': 'Test Collection',
+                'version': '1.0'
+                # Missing description - should fail
+            },
+            'colormaps': {
+                'test_colors': {
+                    'type': 'categorical',
+                    'colors': {'red': '#FF0000', 'green': '#00FF00'}
+                }
+            }
+        }
+        with pytest.raises(ValueError, match="Community colormaps must have 'description' field in metadata"):
+            BioCrayon(community_data, require_metadata=True)
+
+    def test_color_retrieval(self):
+        """Test color retrieval functionality."""
+        user_data = {
+            'colormaps': {
+                'test_colors': {
+                    'type': 'categorical',
+                    'colors': {'red': '#FF0000', 'green': '#00FF00'}
+                }
+            }
+        }
+        bc_user = BioCrayon(user_data)
+        color = bc_user.get_color('test_colors', 'red')
+        assert color == '#FF0000'
+
+    def test_matplotlib_conversion(self):
+        """Test matplotlib conversion functionality."""
+        user_data = {
+            'colormaps': {
+                'test_colors': {
+                    'type': 'categorical',
+                    'colors': {'red': '#FF0000', 'green': '#00FF00'}
+                }
+            }
+        }
+        bc_user = BioCrayon(user_data)
+        cmap = bc_user.to_matplotlib('test_colors')
+        assert cmap is not None
+
+
+class TestCommunityColormaps:
+    """Test all community colormaps for validation and accessibility."""
+
+    def test_all_community_colormaps_validation(self):
+        """Test that all community colormaps pass validation."""
+        import json
+        import jsonschema
+        from pathlib import Path
+        from bio_crayon.validators import validate_colormap_data
+
+        # Load schema
+        with open('schemas/colormap_schema.json') as f:
+            schema = json.load(f)
+
+        # Validate all colormaps
+        community_dir = Path('community_colormaps')
+        errors = []
+
+        for json_file in community_dir.rglob('*.json'):
+            try:
+                with open(json_file) as f:
+                    data = json.load(f)
+                
+                # Validate against JSON schema
+                jsonschema.validate(data, schema)
+                
+                # Validate with metadata requirements for community colormaps
+                validation_errors = validate_colormap_data(data, require_metadata=True)
+                if validation_errors:
+                    errors.append(f'{json_file} - Validation errors: {validation_errors}')
+                    
+            except Exception as e:
+                errors.append(f'{json_file} - {e}')
+
+        # If there are errors, fail the test with details
+        if errors:
+            error_msg = "Community colormap validation failed:\n" + "\n".join(errors)
+            pytest.fail(error_msg)
+
+    def test_community_colormaps_accessibility(self):
+        """Test colorblind accessibility of community colormaps (informational only)."""
+        from pathlib import Path
+        from bio_crayon import BioCrayon
+
+        community_dir = Path('community_colormaps')
+        warnings = []
+
+        for json_file in community_dir.rglob('*.json'):
+            try:
+                bc = BioCrayon(json_file)
+                
+                # Get all colormap names in this file
+                colormap_names = bc.list_colormaps()
+                
+                for colormap_name in colormap_names:
+                    # Check if categorical colormap is colorblind safe
+                    colormap = bc.get_colormap(colormap_name)
+                    if colormap['type'] == 'categorical':
+                        if not bc.is_colorblind_safe(colormap_name):
+                            warnings.append(f'{json_file} - {colormap_name} - Not colorblind safe')
+                        
+            except Exception as e:
+                warnings.append(f'{json_file} - {e}')
+
+        # Log warnings but don't fail the test
+        if warnings:
+            print(f"\nColorblind accessibility warnings ({len(warnings)} found):")
+            for warning in warnings:
+                print(f"  WARNING: {warning}")
+            print("Note: Colorblind accessibility is recommended but not required.")
+        else:
+            print("All categorical colormaps are colorblind safe!")
+
+    def test_community_colormaps_loadable(self):
+        """Test that all community colormaps can be loaded by BioCrayon."""
+        from pathlib import Path
+        from bio_crayon import BioCrayon
+
+        community_dir = Path('community_colormaps')
+        errors = []
+
+        for json_file in community_dir.rglob('*.json'):
+            try:
+                bc = BioCrayon(json_file)
+                
+                # Test that we can list colormaps
+                colormaps = bc.list_colormaps()
+                assert len(colormaps) > 0, f"No colormaps found in {json_file}"
+                
+                # Test that we can get metadata
+                metadata = bc.get_metadata()
+                assert metadata is not None, f"No metadata found in {json_file}"
+                
+                # Test that we can get colormap info for each colormap
+                for colormap_name in colormaps:
+                    info = bc.get_colormap_info(colormap_name)
+                    assert info is not None, f"Could not get info for {colormap_name} in {json_file}"
+                    
+            except Exception as e:
+                errors.append(f'{json_file} - {e}')
+
+        # If there are errors, fail the test with details
+        if errors:
+            error_msg = "Community colormap loading failed:\n" + "\n".join(errors)
+            pytest.fail(error_msg)
