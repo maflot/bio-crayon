@@ -70,51 +70,13 @@
                 "type": "string",
                 "enum": ["deuteranopia", "protanopia", "tritanopia", "None"]
               },
-              "description": "Types of colorblindness tested (use 'None' when colorblind_safe is false)"
+              "description": "Types of colorblindness tested (optional)"
             },
             "contrast_ratio": {
               "type": "string",
               "description": "Contrast ratio information (optional)"
             }
-          },
-          "allOf": [
-            {
-              "if": {
-                "properties": { "colorblind_safe": { "const": true } }
-              },
-              "then": {
-                "properties": {
-                  "tested_types": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": ["deuteranopia", "protanopia", "tritanopia"]
-                    },
-                    "minItems": 1,
-                    "description": "Must specify tested types when colorblind_safe is true"
-                  }
-                },
-                "required": ["tested_types"]
-              }
-            },
-            {
-              "if": {
-                "properties": { "colorblind_safe": { "const": false } }
-              },
-              "then": {
-                "properties": {
-                  "tested_types": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": ["None"]
-                    },
-                    "description": "Use 'None' when colorblind_safe is false"
-                  }
-                }
-              }
-            }
-          ]
+          }
         },
         "license": {
           "type": "string",
