@@ -70,25 +70,33 @@ class TestMissingValues:
         assert len(color) == 7
 
     def test_colormap_accessor_fill_missing(self):
-        """Test fill_missing with ColormapAccessor."""
-        accessor = self.biocrayon["test_categorical"]
-        accessor.set_fill_missing(True, default_color="#FF9999")
+        """Test fill_missing with categorical colormap dictionary access."""
+        colors_dict = self.biocrayon["test_categorical"]
         
-        # Test missing category
-        color = accessor["missing_category"]
-        assert color.startswith("#")
-        assert len(color) == 7
+        # Test existing category
+        color = colors_dict["category1"]
+        assert color == "#FF0000"
         
-        # Test NaN value
-        color = accessor[None]
-        assert color == "#FF9999"
+        # Test missing category - should raise KeyError since it's a direct dict
+        with pytest.raises(KeyError):
+            _ = colors_dict["missing_category"]
+        
+        # Test NaN value - should raise KeyError since it's a direct dict
+        with pytest.raises(KeyError):
+            _ = colors_dict[None]
 
     def test_colormap_accessor_default_behavior(self):
-        """Test that ColormapAccessor respects fill_missing setting."""
-        accessor = self.biocrayon["test_categorical"]
-        # Default should be False
+        """Test that categorical colormap dictionary behaves like a regular dict."""
+        colors_dict = self.biocrayon["test_categorical"]
+        
+        # Test existing categories work
+        assert colors_dict["category1"] == "#FF0000"
+        assert colors_dict["category2"] == "#00FF00"
+        assert colors_dict["category3"] == "#0000FF"
+        
+        # Test missing category raises KeyError
         with pytest.raises(KeyError):
-            _ = accessor["missing_category"]
+            _ = colors_dict["missing_category"]
 
     def test_auto_assigned_colors_are_distinct(self):
         """Test that auto-assigned colors are distinct from existing colors."""
@@ -132,17 +140,15 @@ class TestMissingValues:
         assert color == "#CCCCCC"  # Default color
 
     def test_repr_shows_fill_missing_status(self):
-        """Test that ColormapAccessor repr shows fill_missing status."""
-        accessor = self.biocrayon["test_categorical"]
+        """Test that categorical colormap dictionary has proper repr."""
+        colors_dict = self.biocrayon["test_categorical"]
         
-        # Default should not show fill_missing
-        repr_str = repr(accessor)
-        assert "fill_missing=True" not in repr_str
-        
-        # After setting fill_missing, should show it
-        accessor.set_fill_missing(True)
-        repr_str = repr(accessor)
-        assert "fill_missing=True" in repr_str
+        # Should show the dictionary contents
+        repr_str = repr(colors_dict)
+        assert "category1" in repr_str
+        assert "#FF0000" in repr_str
+        assert "category2" in repr_str
+        assert "#00FF00" in repr_str
 
     def test_multiple_missing_categories_same_color(self):
         """Test that the same missing category gets the same color consistently."""

@@ -608,17 +608,22 @@ class BioCrayon:
         """Iterate over colormap names."""
         return iter(self._colormaps.keys())
     
-    def __getitem__(self, colormap_name: str) -> ColormapAccessor:
+    def __getitem__(self, colormap_name: str) -> Union[Dict[str, str], ColormapAccessor]:
         """
-        Get a colormap accessor for intuitive bracket notation.
+        Get colormap data for intuitive bracket notation.
         
-        Allows syntax like: bc["sex"]["M"] or bc["sex"].keys()
+        For categorical colormaps: returns the colors dictionary directly
+        For continuous colormaps: returns a ColormapAccessor object
+        
+        Allows syntax like: bc["sex"]["M"] or bc["sex"].keys() for categorical
+        or bc["expression"][0.5] for continuous
         
         Args:
             colormap_name: Name of the colormap
             
         Returns:
-            ColormapAccessor object for the specified colormap
+            Dictionary of category-color mappings for categorical colormaps,
+            or ColormapAccessor object for continuous colormaps
             
         Raises:
             KeyError: If colormap doesn't exist
@@ -627,7 +632,14 @@ class BioCrayon:
             available = list(self._colormaps.keys())
             raise KeyError(f"Colormap '{colormap_name}' not found. Available: {available}")
         
-        return ColormapAccessor(self, colormap_name)
+        colormap = self._colormaps[colormap_name]
+        
+        if colormap["type"] == "categorical":
+            # Return the colors dictionary directly for categorical colormaps
+            return colormap["colors"]
+        else:
+            # Return ColormapAccessor for continuous colormaps
+            return ColormapAccessor(self, colormap_name)
 
     def validate_expression_range(
         self, colormap_name: str, min_val: float, max_val: float
