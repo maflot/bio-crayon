@@ -96,6 +96,34 @@ class ColormapAccessor:
         else:
             positions = self._colormap["positions"]
             return f"ColormapAccessor('{self.colormap_name}', range=[{positions[0]}, {positions[-1]}])"
+    
+    def to_list(self) -> List[str]:
+        """Convert to list of colors (for pandas compatibility)."""
+        if self._colormap["type"] == "categorical":
+            return list(self._colormap["colors"].values())
+        else:
+            raise AttributeError("to_list() only available for categorical colormaps")
+    
+    def to_dict(self) -> Dict[str, str]:
+        """Convert to dictionary mapping categories to colors."""
+        if self._colormap["type"] == "categorical":
+            return dict(self._colormap["colors"])
+        else:
+            raise AttributeError("to_dict() only available for categorical colormaps")
+    
+    def __len__(self) -> int:
+        """Return number of colors."""
+        if self._colormap["type"] == "categorical":
+            return len(self._colormap["colors"])
+        else:
+            return len(self._colormap["colors"])
+    
+    def __iter__(self):
+        """Iterate over colors (for pandas compatibility)."""
+        if self._colormap["type"] == "categorical":
+            return iter(self._colormap["colors"].values())
+        else:
+            return iter(self._colormap["colors"])
 
 
 class BioCrayon:

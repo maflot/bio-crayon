@@ -70,7 +70,7 @@
                 "type": "string",
                 "enum": ["deuteranopia", "protanopia", "tritanopia", "None"]
               },
-              "description": "Types of colorblindness tested (use 'None' if not colorblind safe)"
+              "description": "Types of colorblindness tested (use 'None' when colorblind_safe is false)"
             },
             "contrast_ratio": {
               "type": "string",
