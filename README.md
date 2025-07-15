@@ -251,6 +251,78 @@ bc.get_color("my_colors", "red")
 # get colorblind safe colormap
 ```
 
+### Plotting with pandas
+```python
+import pandas as pd
+import bio_crayon
+
+# Load colormap
+bc = bio_crayon.BioCrayon.from_community("allen_immune", "single_cell")
+
+# Create DataFrame with color values
+df = pd.DataFrame(bc["subclass_name"].items(), columns=["Subclass", "Color"])
+
+# Plot using matplotlib
+plt.figure(figsize=(10, 6))
+sns.barplot(x="Subclass", y="Color", data=df, palette="viridis")
+plt.xticks(rotation=45)
+plt.show()
+```
+
+**Complete Example**: See `examples/pandas_plotting_example.py` for a full example with artificial data and multiple histogram visualizations.
+First setup fresh environment:
+```bash
+#!/bin/bash
+# Simple BioCrayon Setup
+
+echo "🎨 Setting up BioCrayon..."
+
+# Create environment
+conda create -n bio-crayon python=3.10 -y
+conda activate bio-crayon
+
+# Install packages
+conda install matplotlib numpy -y
+pip install bio-crayon
+
+# Test
+python -c "
+import matplotlib.pyplot as plt
+import bio_crayon
+print('✅ Setup complete!')
+"
+
+echo "Done! Run: conda activate bio-crayon"
+```
+
+### Plotting with seaborn
+```python
+import seaborn as sns
+import bio_crayon
+
+# Load colormap
+bc = bio_crayon.BioCrayon.from_community("allen_immune", "single_cell")
+
+# Plot using seaborn
+sns.palplot(bc["subclass_name"])
+```
+
+**Complete Example**: See `examples/seaborn_plotting_example.py` for a full example with artificial data, histograms, box plots, and advanced seaborn visualizations.
+
+### Plotting with matplotlib
+```python
+import matplotlib.pyplot as plt
+import bio_crayon
+
+# Load colormap
+bc = bio_crayon.BioCrayon.from_community("allen_immune", "single_cell")
+
+# Use colors in matplotlib plots
+colors = bc["subclass_name"]
+```
+
+**Complete Example**: See `examples/matplotlib_plotting_example.py` for a full example with artificial data, histograms, box plots, and advanced matplotlib visualizations.
+
 ## Architecture
 
 ### Core Components
