@@ -31,6 +31,8 @@ BioCrayon follows a community-driven approach with:
 
 ## Contributibng
 
+WARNING: This is a work in progress. There might be changes in the colormap schema and the package will be updated accordingly, as well as in the folder structure.
+
 BioCrayon welcomes community contributions! We follow a structured approach to ensure quality and scientific accuracy.
 
 ### Contributing Colormaps

@@ -1,0 +1,45 @@
+{
+    "metadata": {
+      "name": "Single-Cell Blood Atlas - Neurodegeneration",
+      "version": "1.0.0",
+      "description": "A single-cell atlas mapping sex-specific gene-expression changes in blood upon neurodegeneration",
+      "author": "Grandke, Friederike and Fehlmann, Tobias and Kern, Fabian and Gate, David M and Wolff, Tobias William and Leventhal, Olivia and Channappa, Divya and Hirsch, Pascal and Wilson, Edward N and Meese, Eckart and others",
+      "source": "https://doi.org/10.1038/s41467-025-56833-7",
+      "doi": "10.1038/s41467-025-56833-7",
+      "paper_title": "A single-cell atlas to map sex-specific gene-expression changes in blood upon neurodegeneration",
+      "year": 2025,
+      "journal": "Nature Communications",
+      "keywords": [
+        "single-cell",
+        "atlas",
+        "sex-specific",
+        "gene-expression",
+        "blood",
+        "neurodegeneration",
+        "transcriptomics",
+        "PBMC",
+        "biomarkers"
+      ],
+      "use_case": "Sex-specific differential gene expression analysis in blood cells, neurodegeneration biomarker discovery, single-cell RNA-seq visualization",
+      "accessibility": {
+        "colorblind_safe": true,
+        "tested_types": ["deuteranopia", "protanopia"],
+        "contrast_ratio": "AA compliant"
+      },
+      "data_source": "Peripheral blood mononuclear cells (PBMC) single-cell RNA sequencing data"
+    },
+    "colormaps": {
+      "sex": {
+        "type": "categorical",
+        "description": "Sex-specific color coding for male and female samples",
+        "colors": {
+          "M": "#4B7837",
+          "F": "#983A94",
+          "Male": "#4B7837",
+          "Female": "#983A94",
+          "0": "#983A94",
+          "1": "#4B7837"
+        }
+      }
+    }
+}
