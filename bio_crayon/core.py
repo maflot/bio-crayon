@@ -35,6 +35,69 @@ from .validators import (
 )
 
 
+class ColormapAccessor:
+    """
+    Helper class to provide intuitive bracket access to colormaps.
+    
+    Allows syntax like: bc["sex"]["M"] or bc["sex"].keys()
+    """
+    
+    def __init__(self, biocrayon: "BioCrayon", colormap_name: str):
+        self.biocrayon = biocrayon
+        self.colormap_name = colormap_name
+        self._colormap = biocrayon.get_colormap(colormap_name)
+    
+    def __getitem__(self, key: Union[str, float]) -> str:
+        """Get color for key (category or value)."""
+        return self.biocrayon.get_color(self.colormap_name, key)
+    
+    def __contains__(self, key: Union[str, float]) -> bool:
+        """Check if key exists in colormap."""
+        if self._colormap["type"] == "categorical":
+            return key in self._colormap["colors"]
+        else:
+            # For continuous, check if value is in range
+            positions = self._colormap["positions"]
+            return positions[0] <= key <= positions[-1]
+    
+    def keys(self):
+        """Get all categories (for categorical colormaps)."""
+        if self._colormap["type"] == "categorical":
+            return self._colormap["colors"].keys()
+        else:
+            raise AttributeError("keys() only available for categorical colormaps")
+    
+    def values(self):
+        """Get all colors (for categorical colormaps)."""
+        if self._colormap["type"] == "categorical":
+            return self._colormap["colors"].values()
+        else:
+            raise AttributeError("values() only available for categorical colormaps")
+    
+    def items(self):
+        """Get all category-color pairs (for categorical colormaps)."""
+        if self._colormap["type"] == "categorical":
+            return self._colormap["colors"].items()
+        else:
+            raise AttributeError("items() only available for categorical colormaps")
+    
+    def get(self, key: Union[str, float], default=None):
+        """Get color with default value if key doesn't exist."""
+        try:
+            return self.__getitem__(key)
+        except (KeyError, ValueError):
+            return default
+    
+    def __repr__(self):
+        colormap_type = self._colormap["type"]
+        if colormap_type == "categorical":
+            categories = list(self._colormap["colors"].keys())
+            return f"ColormapAccessor('{self.colormap_name}', categories={categories})"
+        else:
+            positions = self._colormap["positions"]
+            return f"ColormapAccessor('{self.colormap_name}', range=[{positions[0]}, {positions[-1]}])"
+
+
 class BioCrayon:
     """
     Main class for managing biological data colormaps.
@@ -420,6 +483,27 @@ class BioCrayon:
     def __iter__(self):
         """Iterate over colormap names."""
         return iter(self._colormaps.keys())
+    
+    def __getitem__(self, colormap_name: str) -> ColormapAccessor:
+        """
+        Get a colormap accessor for intuitive bracket notation.
+        
+        Allows syntax like: bc["sex"]["M"] or bc["sex"].keys()
+        
+        Args:
+            colormap_name: Name of the colormap
+            
+        Returns:
+            ColormapAccessor object for the specified colormap
+            
+        Raises:
+            KeyError: If colormap doesn't exist
+        """
+        if colormap_name not in self._colormaps:
+            available = list(self._colormaps.keys())
+            raise KeyError(f"Colormap '{colormap_name}' not found. Available: {available}")
+        
+        return ColormapAccessor(self, colormap_name)
 
     def validate_expression_range(
         self, colormap_name: str, min_val: float, max_val: float

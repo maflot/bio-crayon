@@ -154,7 +154,7 @@ pip install -e .
 
 ## Examples
 
-### Basic Usage
+### Basic Usage using getters
 ```python
 from bio_crayon import BioCrayon
 
@@ -183,6 +183,42 @@ user_data = {
 
 bc = BioCrayon(user_data)
 color = bc.get_color("my_colors", "red")
+```
+
+### Basic Usage using bracket notation
+```python
+from bio_crayon import BioCrayon
+
+# Load community colormaps
+bc = BioCrayon.from_community("allen_immune", "single_cell")
+
+bc["subclass_name"]["Astrocyte"]
+```
+### Locally stored colormaps
+```python 
+from bio_crayon import BioCrayon
+
+# Load your colormap
+bc = BioCrayon("/path/to/rosmap_compass.json", require_metadata=True)
+
+# Intuitive bracket access
+bc["sex"]["M"]           # Get color for male: "#4B7837"
+bc["sex"]["F"]           # Get color for female: "#983A94"
+bc["study"]["Fujita 2024"]  # Get color for study: "#A4DBD2"
+
+# Dictionary-like methods
+bc["sex"].keys()         # Get all categories: ['M', 'F', 'Male', 'Female', '0', '1']
+bc["sex"].values()       # Get all colors: ['#4B7837', '#983A94', ...]
+bc["sex"].items()        # Get category-color pairs
+bc["sex"].get("M")      # Get with default: "#4B7837"
+bc["sex"].get("X", "#000000")  # Get with custom default: "#000000"
+
+# Check if category exists
+"M" in bc["sex"]        # True
+"X" in bc["sex"]        # False
+
+# Get info about the colormap
+print(bc["sex"])        
 ```
 
 ### Community Colormaps
