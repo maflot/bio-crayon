@@ -4,8 +4,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------
 project = 'bio-crayon'
-copyright = '2025, Your Name'
-author = 'Your Name'
+copyright = '2025, Matthias Flotho'
+author = 'Matthias Flotho'
 release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------

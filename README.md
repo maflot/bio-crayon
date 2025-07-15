@@ -69,7 +69,7 @@ BioCrayon welcomes community contributions! We follow a structured approach to e
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/bio-crayon.git
+git clone https://github.com/maflot/bio-crayon.git
 cd bio-crayon
 
 # Install in development mode
@@ -358,7 +358,7 @@ If you use BioCrayon in your research, please cite:
 
 ```
 BioCrayon: A Python package for managing biological data colormaps
-Your Name, 2024
+Matthias Flotho, 2025
 https://github.com/maflot/bio-crayon
 ```
 

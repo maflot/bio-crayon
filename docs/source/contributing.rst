@@ -11,7 +11,7 @@ Development Setup
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/bio-crayon.git
+   git clone https://github.com/maflot/bio-crayon.git
    cd bio-crayon
 
 3. Install in development mode:

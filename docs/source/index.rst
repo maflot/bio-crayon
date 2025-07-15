@@ -1,7 +1,8 @@
 bio-crayon Documentation
 ========================
 
-A Python package for biological data visualization with custom colormaps.
+BioCrayon - colormap manager with community backed defaults
+Ever got puzzled by the amount of different colors you want to use in your paper? Lost track of the convention you made up? BioCrayon helps by providing an easy JSON wrapper to store your color maps or use established ones like the Allen Brain Atlas colors. Use it locally or contribute to our community colormaps!
 
 .. toctree::
    :maxdepth: 2

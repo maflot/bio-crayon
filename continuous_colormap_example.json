@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "name": "Continuous Colormap Examples",
+    "version": "1.0.0",
+    "description": "Comprehensive examples of continuous colormaps for biological data visualization",
+    "author": "BioCrayon Examples",
+    "keywords": ["continuous", "gradient", "biological", "visualization"],
+    "use_case": "Examples for gene expression, protein abundance, temperature gradients, and other continuous biological data",
+    "accessibility": {
+      "colorblind_safe": true,
+      "tested_types": ["deuteranopia", "protanopia", "tritanopia"],
+      "contrast_ratio": "AA compliant"
+    }
+  },
+  "colormaps": {
+    "gene_expression_diverging": {
+      "type": "continuous",
+      "description": "Diverging colormap for gene expression data (blue-white-red)",
+      "colors": ["#0000FF", "#FFFFFF", "#FF0000"],
+      "positions": [0.0, 0.5, 1.0],
+      "interpolation": "linear"
+    },
+    "gene_expression_sequential": {
+      "type": "continuous",
+      "description": "Sequential colormap for gene expression (white to red)",
+      "colors": ["#FFFFFF", "#FFE5E5", "#FFCCCC", "#FFB2B2", "#FF9999", "#FF7F7F", "#FF6666", "#FF4C4C", "#FF3333", "#FF1919", "#FF0000"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "protein_abundance": {
+      "type": "continuous",
+      "description": "Colormap for protein abundance visualization (white to dark red)",
+      "colors": ["#FFFFFF", "#FFFFCC", "#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "temperature_gradient": {
+      "type": "continuous",
+      "description": "Temperature-based gradient for thermal data (blue to red)",
+      "colors": ["#000080", "#0000FF", "#0080FF", "#00FFFF", "#80FF80", "#FFFF00", "#FF8000", "#FF0000", "#800000"],
+      "positions": [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+      "interpolation": "linear"
+    },
+    "ph_scale": {
+      "type": "continuous",
+      "description": "pH scale colormap for acid-base visualization",
+      "colors": ["#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80", "#00FFFF", "#0080FF", "#0000FF", "#8000FF", "#FF00FF"],
+      "positions": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "interpolation": "linear"
+    },
+    "fluorescence_intensity": {
+      "type": "continuous",
+      "description": "Fluorescence intensity colormap (black to bright green)",
+      "colors": ["#000000", "#001100", "#002200", "#003300", "#004400", "#005500", "#006600", "#007700", "#008800", "#009900", "#00AA00", "#00BB00", "#00CC00", "#00DD00", "#00EE00", "#00FF00"],
+      "positions": [0.0, 0.067, 0.133, 0.2, 0.267, 0.333, 0.4, 0.467, 0.533, 0.6, 0.667, 0.733, 0.8, 0.867, 0.933, 1.0],
+      "interpolation": "linear"
+    },
+    "viridis_style": {
+      "type": "continuous",
+      "description": "Viridis-style colormap for scientific visualization",
+      "colors": ["#440154", "#482878", "#3E4989", "#31688E", "#26828E", "#1F9E89", "#35B779", "#6DCD59", "#B4DE2C", "#FDE725"],
+      "positions": [0.0, 0.111, 0.222, 0.333, 0.444, 0.556, 0.667, 0.778, 0.889, 1.0],
+      "interpolation": "linear"
+    },
+    "plasma_style": {
+      "type": "continuous",
+      "description": "Plasma-style colormap for high-contrast visualization",
+      "colors": ["#0D0887", "#4A03A8", "#7E03A8", "#A923A5", "#CC4778", "#E16462", "#F89441", "#FDC328", "#F0F921"],
+      "positions": [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+      "interpolation": "linear"
+    },
+    "simple_binary": {
+      "type": "continuous",
+      "description": "Simple binary colormap (black to white)",
+      "colors": ["#000000", "#FFFFFF"],
+      "positions": [0.0, 1.0],
+      "interpolation": "linear"
+    },
+    "cubic_interpolation": {
+      "type": "continuous",
+      "description": "Example with cubic interpolation for smoother gradients",
+      "colors": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+      "positions": [0.0, 0.25, 0.5, 0.75, 1.0],
+      "interpolation": "cubic"
+    }
+  }
+} 

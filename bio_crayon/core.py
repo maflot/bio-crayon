@@ -38,26 +38,26 @@ from .validators import (
 class ColormapAccessor:
     """
     Helper class to provide intuitive bracket access to colormaps.
-    
+
     Allows syntax like: bc["sex"]["M"] or bc["sex"].keys()
     """
-    
+
     def __init__(self, biocrayon: "BioCrayon", colormap_name: str):
         self.biocrayon = biocrayon
         self.colormap_name = colormap_name
         self._colormap = biocrayon.get_colormap(colormap_name)
         self._fill_missing = False
         self._default_color = "#CCCCCC"
-    
+
     def __getitem__(self, key: Union[str, float]) -> str:
         """Get color for key (category or value)."""
         return self.biocrayon.get_color(
-            self.colormap_name, 
-            key, 
+            self.colormap_name,
+            key,
             fill_missing=self._fill_missing,
-            default_color=self._default_color
+            default_color=self._default_color,
         )
-    
+
     def __contains__(self, key: Union[str, float]) -> bool:
         """Check if key exists in colormap."""
         if self._colormap["type"] == "categorical":
@@ -66,39 +66,41 @@ class ColormapAccessor:
             # For continuous, check if value is in range
             positions = self._colormap["positions"]
             return positions[0] <= key <= positions[-1]
-    
+
     def keys(self):
         """Get all categories (for categorical colormaps)."""
         if self._colormap["type"] == "categorical":
             return self._colormap["colors"].keys()
         else:
             raise AttributeError("keys() only available for categorical colormaps")
-    
+
     def values(self):
         """Get all colors (for categorical colormaps)."""
         if self._colormap["type"] == "categorical":
             return self._colormap["colors"].values()
         else:
             raise AttributeError("values() only available for categorical colormaps")
-    
+
     def items(self):
         """Get all category-color pairs (for categorical colormaps)."""
         if self._colormap["type"] == "categorical":
             return self._colormap["colors"].items()
         else:
             raise AttributeError("items() only available for categorical colormaps")
-    
+
     def get(self, key: Union[str, float], default=None):
         """Get color with default value if key doesn't exist."""
         try:
             return self.__getitem__(key)
         except (KeyError, ValueError):
             return default
-    
-    def set_fill_missing(self, fill_missing: bool = True, default_color: str = "#CCCCCC"):
+
+    def set_fill_missing(
+        self, fill_missing: bool = True, default_color: str = "#CCCCCC"
+    ):
         """
         Configure whether to automatically assign colors for missing categories.
-        
+
         Args:
             fill_missing: If True, automatically assign colors for missing categories
             default_color: Default color to use for missing values
@@ -106,7 +108,7 @@ class ColormapAccessor:
         self._fill_missing = fill_missing
         self._default_color = default_color
         return self
-    
+
     def __repr__(self):
         colormap_type = self._colormap["type"]
         if colormap_type == "categorical":
@@ -116,28 +118,28 @@ class ColormapAccessor:
         else:
             positions = self._colormap["positions"]
             return f"ColormapAccessor('{self.colormap_name}', range=[{positions[0]}, {positions[-1]}])"
-    
+
     def to_list(self) -> List[str]:
         """Convert to list of colors (for pandas compatibility)."""
         if self._colormap["type"] == "categorical":
             return list(self._colormap["colors"].values())
         else:
             raise AttributeError("to_list() only available for categorical colormaps")
-    
+
     def to_dict(self) -> Dict[str, str]:
         """Convert to dictionary mapping categories to colors."""
         if self._colormap["type"] == "categorical":
             return dict(self._colormap["colors"])
         else:
             raise AttributeError("to_dict() only available for categorical colormaps")
-    
+
     def __len__(self) -> int:
         """Return number of colors."""
         if self._colormap["type"] == "categorical":
             return len(self._colormap["colors"])
         else:
             return len(self._colormap["colors"])
-    
+
     def __iter__(self):
         """Iterate over colors (for pandas compatibility)."""
         if self._colormap["type"] == "categorical":
@@ -227,11 +229,11 @@ class BioCrayon:
         return self._colormaps[name]
 
     def get_color(
-        self, 
-        colormap_name: str, 
-        key_or_value: Union[str, float], 
+        self,
+        colormap_name: str,
+        key_or_value: Union[str, float],
         fill_missing: bool = False,
-        default_color: str = "#CCCCCC"
+        default_color: str = "#CCCCCC",
     ) -> str:
         """
         Get color for categorical key or continuous value.
@@ -254,16 +256,18 @@ class BioCrayon:
 
         if colormap_type == "categorical":
             colors = colormap["colors"]
-            
+
             # Handle NaN/nan values
             if key_or_value in [None, "NaN", "nan", "NAN", "Nan"]:
                 return default_color
-            
+
             # Handle missing categories
             if key_or_value not in colors:
                 if fill_missing:
                     # Auto-assign a color for missing category
-                    return self._assign_color_for_missing_category(colormap_name, key_or_value, colors)
+                    return self._assign_color_for_missing_category(
+                        colormap_name, key_or_value, colors
+                    )
                 else:
                     available = list(colors.keys())
                     raise KeyError(
@@ -317,54 +321,52 @@ class BioCrayon:
             raise ValueError(f"Unknown colormap type: {colormap_type}")
 
     def _assign_color_for_missing_category(
-        self, 
-        colormap_name: str, 
-        category: str, 
-        existing_colors: Dict[str, str]
+        self, colormap_name: str, category: str, existing_colors: Dict[str, str]
     ) -> str:
         """
         Assign a color for a missing category.
-        
+
         Args:
             colormap_name: Name of the colormap
             category: The missing category
             existing_colors: Dictionary of existing category-color mappings
-            
+
         Returns:
             Hex color string for the missing category
         """
         # Get colorblind-safe colors
         from .utils import get_colorblind_safe_colors
-        
+
         # Count how many colors we need (existing + 1 for the new category)
         n_needed = len(existing_colors) + 1
-        
+
         # Get colorblind-safe colors
         safe_colors = get_colorblind_safe_colors(n_needed)
-        
+
         # Find the first color that's not already used
         for color in safe_colors:
             if color not in existing_colors.values():
                 # Add the new category-color mapping to the colormap
                 self._colormaps[colormap_name]["colors"][category] = color
                 return color
-        
+
         # If all safe colors are used, generate a new one
         # Use a simple algorithm to generate a distinct color
         used_colors = set(existing_colors.values())
-        
+
         # Try different hues to find a distinct color
         for hue in range(0, 360, 30):  # Every 30 degrees
             # Convert HSV to RGB
             from .utils import hsv_to_rgb, rgb_to_hex
+
             rgb = hsv_to_rgb(hue, 0.7, 0.8)  # Saturation 0.7, Value 0.8
             new_color = rgb_to_hex(*rgb)
-            
+
             if new_color not in used_colors:
                 # Add the new category-color mapping to the colormap
                 self._colormaps[colormap_name]["colors"][category] = new_color
                 return new_color
-        
+
         # Fallback: use a gray color
         fallback_color = "#CCCCCC"
         self._colormaps[colormap_name]["colors"][category] = fallback_color
@@ -607,33 +609,37 @@ class BioCrayon:
     def __iter__(self):
         """Iterate over colormap names."""
         return iter(self._colormaps.keys())
-    
-    def __getitem__(self, colormap_name: str) -> Union[Dict[str, str], ColormapAccessor]:
+
+    def __getitem__(
+        self, colormap_name: str
+    ) -> Union[Dict[str, str], ColormapAccessor]:
         """
         Get colormap data for intuitive bracket notation.
-        
+
         For categorical colormaps: returns the colors dictionary directly
         For continuous colormaps: returns a ColormapAccessor object
-        
+
         Allows syntax like: bc["sex"]["M"] or bc["sex"].keys() for categorical
         or bc["expression"][0.5] for continuous
-        
+
         Args:
             colormap_name: Name of the colormap
-            
+
         Returns:
             Dictionary of category-color mappings for categorical colormaps,
             or ColormapAccessor object for continuous colormaps
-            
+
         Raises:
             KeyError: If colormap doesn't exist
         """
         if colormap_name not in self._colormaps:
             available = list(self._colormaps.keys())
-            raise KeyError(f"Colormap '{colormap_name}' not found. Available: {available}")
-        
+            raise KeyError(
+                f"Colormap '{colormap_name}' not found. Available: {available}"
+            )
+
         colormap = self._colormaps[colormap_name]
-        
+
         if colormap["type"] == "categorical":
             # Return the colors dictionary directly for categorical colormaps
             return colormap["colors"]
@@ -750,11 +756,11 @@ class BioCrayon:
         return fig
 
     def get_color_lab(
-        self, 
-        colormap_name: str, 
+        self,
+        colormap_name: str,
         key_or_value: Union[str, float],
         fill_missing: bool = False,
-        default_color: str = "#CCCCCC"
+        default_color: str = "#CCCCCC",
     ) -> str:
         """
         Get color using LAB color space interpolation for better perceptual uniformity.
@@ -777,16 +783,18 @@ class BioCrayon:
 
         if colormap_type == "categorical":
             colors = colormap["colors"]
-            
+
             # Handle NaN/nan values
             if key_or_value in [None, "NaN", "nan", "NAN", "Nan"]:
                 return default_color
-            
+
             # Handle missing categories
             if key_or_value not in colors:
                 if fill_missing:
                     # Auto-assign a color for missing category
-                    return self._assign_color_for_missing_category(colormap_name, key_or_value, colors)
+                    return self._assign_color_for_missing_category(
+                        colormap_name, key_or_value, colors
+                    )
                 else:
                     available = list(colors.keys())
                     raise KeyError(
