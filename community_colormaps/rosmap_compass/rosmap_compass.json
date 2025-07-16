@@ -20,7 +20,7 @@
         "tested_types": ["None"],
         "contrast_ratio": "None"
       },
-      "data_source": "Peripheral blood mononuclear cells (PBMC) single-cell RNA sequencing data"
+      "data_source": "Single-nucleus RNA-seq from ROSMAP and AMPAD datasets"
     },
     "colormaps": {
       "sex": {
