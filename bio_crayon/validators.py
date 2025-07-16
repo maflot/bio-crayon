@@ -13,9 +13,17 @@ from jsonschema import ValidationError
 
 def load_schema() -> Dict[str, Any]:
     """Load the colormap JSON schema."""
-    schema_path = Path(__file__).parent.parent / "schemas" / "colormap_schema.json"
-    with open(schema_path, "r") as f:
-        return json.load(f)
+    import importlib.resources
+    
+    try:
+        # Try to load from package data (installed package)
+        with importlib.resources.files("bio_crayon").joinpath("schemas/colormap_schema.json").open("r") as f:
+            return json.load(f)
+    except (FileNotFoundError, ModuleNotFoundError):
+        # Fallback to relative path for development
+        schema_path = Path(__file__).parent / "schemas" / "colormap_schema.json"
+        with open(schema_path, "r") as f:
+            return json.load(f)
 
 
 def validate_colormap_data(

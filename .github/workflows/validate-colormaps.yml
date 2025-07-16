@@ -38,9 +38,9 @@ jobs:
           from pathlib import Path
           from bio_crayon.validators import validate_colormap_data
           
-          # Load schema
-          with open('schemas/colormap_schema.json') as f:
-              schema = json.load(f)
+          # Load schema from package
+          from bio_crayon.validators import load_schema
+          schema = load_schema()
           
           # Validate all colormaps
           community_dir = Path('community_colormaps')

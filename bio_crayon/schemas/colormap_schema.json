@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BioCrayon Colormap Schema",
+  "description": "Schema for biological data colormaps supporting categorical and continuous mappings. Metadata is optional for user colormaps but required for community colormaps.",
+  "type": "object",
+  "required": ["colormaps"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the colormap collection"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+          "description": "Version string (e.g., '1.0' or '1.0.0')"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the colormap collection"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author of the colormap collection (optional)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source URL or reference (optional)"
+        },
+        "doi": {
+          "type": "string",
+          "description": "DOI of the paper (optional)"
+        },
+        "paper_title": {
+          "type": "string",
+          "description": "Title of the paper (optional)"
+        },
+        "year": {
+          "type": "integer",
+          "description": "Publication year (optional)"
+        },
+        "journal": {
+          "type": "string",
+          "description": "Journal name (optional)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of keywords (optional)"
+        },
+        "use_case": {
+          "type": "string",
+          "description": "Description of use case (optional)"
+        },
+        "accessibility": {
+          "type": "object",
+          "description": "Accessibility information (optional)",
+          "properties": {
+            "colorblind_safe": {
+              "type": "boolean",
+              "description": "Whether colors are colorblind safe"
+            },
+            "tested_types": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["deuteranopia", "protanopia", "tritanopia", "None"]
+              },
+              "description": "Types of colorblindness tested (optional)"
+            },
+            "contrast_ratio": {
+              "type": "string",
+              "description": "Contrast ratio information (optional)"
+            }
+          }
+        },
+        "license": {
+          "type": "string",
+          "description": "License information (optional)"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation date in ISO format (optional)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "colormaps": {
+      "type": "object",
+      "description": "Collection of colormaps",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["categorical", "continuous"],
+              "description": "Type of colormap"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of this specific colormap"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "type": { "const": "categorical" } }
+              },
+              "then": {
+                "required": ["colors"],
+                "properties": {
+                  "colors": {
+                    "type": "object",
+                    "description": "Mapping of category names to colors",
+                    "patternProperties": {
+                      "^.+$": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                        "description": "Hex color code"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": { "type": { "const": "continuous" } }
+              },
+              "then": {
+                "required": ["colors", "positions"],
+                "properties": {
+                  "colors": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                      "description": "Hex color code"
+                    },
+                    "description": "Array of colors for the gradient"
+                  },
+                  "positions": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 1.0
+                    },
+                    "description": "Array of positions for the gradient (0.0 to 1.0)"
+                  },
+                  "interpolation": {
+                    "type": "string",
+                    "enum": ["linear", "cubic", "spline"],
+                    "default": "linear",
+                    "description": "Interpolation method for the gradient"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+} 

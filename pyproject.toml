@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bio-crayon"
-version = "0.1.0"
+version = "0.1.3"
 description = "A Python package for managing biological data colormaps"
 readme = "README.md"
 license = "MIT"
@@ -50,6 +50,9 @@ bio-crayon = "bio_crayon.cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["bio_crayon*"]
+
+[tool.setuptools.package-data]
+bio_crayon = ["schemas/*.json"]
 
 [tool.black]
 line-length = 88
