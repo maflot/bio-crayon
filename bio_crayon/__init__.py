@@ -5,9 +5,15 @@ This package provides tools for loading, validating, and using colormaps
 specifically designed for biological data visualization.
 """
 
-__version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version("bio-crayon")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "unknown"
+
+__author__ = "Matthias Flotho"
+__email__ = "matthias.flotho@ccb.uni-saarland.de"
 
 from .core import BioCrayon
 from .utils import hex_to_rgb, rgb_to_hex, interpolate_colors

@@ -4,17 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bio-crayon"
-version = "0.1.0"
+version = "0.1.3"
 description = "A Python package for managing biological data colormaps"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Matthias Flotho", email = "matthias.flotho@ccb.uni-saarland.de"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -51,6 +50,9 @@ bio-crayon = "bio_crayon.cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["bio_crayon*"]
+
+[tool.setuptools.package-data]
+bio_crayon = ["schemas/*.json"]
 
 [tool.black]
 line-length = 88

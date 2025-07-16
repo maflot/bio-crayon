@@ -2,7 +2,7 @@
 
 ![BioCrayon Logo](logo_small.png)    
 
-# BioCrayon
+# BioCrayon [WORK IN PROGRESS]
 ![pypi](https://img.shields.io/pypi/v/bio-crayon)
 
 A community-driven Python package for managing biological data colormaps with support for both categorical and continuous color mappings.
@@ -69,7 +69,7 @@ BioCrayon welcomes community contributions! We follow a structured approach to e
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/bio-crayon.git
+git clone https://github.com/maflot/bio-crayon.git
 cd bio-crayon
 
 # Install in development mode
@@ -147,7 +147,7 @@ pip install bio-crayon
 FOR NOW:
 ### From Source
 ```bash
-git clone https://github.com/yourusername/bio-crayon.git
+git clone https://github.com/maflot/bio-crayon.git
 cd bio-crayon
 pip install -e .
 ```
@@ -167,6 +167,54 @@ print(color)  # "#5480A3"
 
 # Convert to matplotlib
 cmap = bc.to_matplotlib("immune_expression")
+```
+
+### Community Colormaps: List, Load, and Plot
+```python
+import bio_crayon as bc
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+
+# List all available community colormaps by category
+print("Available community colormaps:")
+community = bc.BioCrayon.list_community_colormaps()
+for category, colormaps in community.items():
+    print(f"  {category}: {colormaps}")
+
+# Load a specific community colormap (e.g., Allen Brain single cell)
+allen_bc = bc.BioCrayon.from_community("allen_brain", "single_cell")
+print("\nLoaded colormaps in 'allen_brain/single_cell':")
+print(allen_bc.list_colormaps())
+
+# Access a specific colormap and print its categories (if categorical)
+colormap_name = allen_bc.list_colormaps()[0]
+colormap = allen_bc.get_colormap(colormap_name)
+if colormap["type"] == "categorical":
+    print(f"\nCategories in '{colormap_name}':")
+    categories = list(colormap["colors"].keys())
+    print(categories)
+
+    # Convert hex colors to RGB for plotting
+    colors = [mcolors.to_rgb(colormap["colors"][cat]) for cat in categories]
+    color_array = [colors]
+
+    fig, ax = plt.subplots(figsize=(max(6, len(categories)), 1))
+    ax.imshow(color_array, aspect="auto")
+    ax.set_xticks(range(len(categories)))
+    ax.set_xticklabels(categories, rotation=45, ha="right", fontsize=8)
+    ax.set_yticks([])
+    ax.set_title(f"Colormap: {colormap_name}")
+    plt.tight_layout()
+    plt.show()
+else:
+    print(f"\n'{colormap_name}' is a continuous colormap.")
+    cmap = allen_bc.to_matplotlib(colormap_name)
+    fig, ax = plt.subplots(figsize=(8, 1))
+    gradient = [list(range(256))]
+    ax.imshow(gradient, aspect="auto", cmap=cmap)
+    ax.set_axis_off()
+    ax.set_title(f"Colormap: {colormap_name}")
+    plt.show()
 ```
 
 ### User Colormaps
@@ -358,14 +406,77 @@ If you use BioCrayon in your research, please cite:
 
 ```
 BioCrayon: A Python package for managing biological data colormaps
-Your Name, 2024
+Matthias Flotho, 2025
 https://github.com/maflot/bio-crayon
+```
+
+## Development
+
+### Setup Development Environment
+```bash
+# Clone the repository
+git clone https://github.com/maflot/bio-crayon.git
+cd bio-crayon
+
+# Install in development mode
+make install-dev
+
+# Run tests
+make test
+
+# Format code
+make format
+
+# Run linting
+make lint
+```
+
+### Release Process
+
+The project uses automated versioning and releases. To create a new release:
+
+1. **Patch Release** (bug fixes):
+   ```bash
+   make release-patch
+   ```
+
+2. **Minor Release** (new features):
+   ```bash
+   make release-minor
+   ```
+
+3. **Major Release** (breaking changes):
+   ```bash
+   make release-major
+   ```
+
+4. **Dry Run** (see what would be done):
+   ```bash
+   make dry-run-patch
+   ```
+
+The release process will:
+- Bump the version number in `pyproject.toml`
+- Create a git commit and tag
+- Push the tag to GitHub
+- Trigger GitHub Actions to build and publish to PyPI
+
+### Available Make Commands
+```bash
+make help          # Show all available commands
+make install       # Install package in development mode
+make install-dev   # Install with development dependencies
+make test          # Run tests
+make lint          # Run linting checks
+make format        # Format code with black
+make clean         # Clean build artifacts
+make build         # Build the package
 ```
 
 ## Links
 
-- **Documentation**: [Coming soon]
-- **PyPI**: [Coming soon]
+- **Documentation**: https://maflot.github.io/bio-crayon/#
+- **PyPI**: https://pypi.org/project/bio-crayon/
 - **GitHub**: https://github.com/maflot/bio-crayon
 - **Issues**: https://github.com/maflot/bio-crayon/issues
 - **Discussions**: https://github.com/maflot/bio-crayon/discussions
