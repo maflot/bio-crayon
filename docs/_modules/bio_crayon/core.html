@@ -86,6 +86,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mcolors</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_from_file</span><span class="p">,</span>
@@ -1067,21 +1068,34 @@
 <span class="sd">            FileNotFoundError: If colormap doesn&#39;t exist in community collection</span>
 <span class="sd">            ValueError: If colormap data is invalid</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Construct path to community colormap</span>
-        <span class="n">community_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;community_colormaps&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">category</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="c1"># GitHub repository URL for community colormaps</span>
+        <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/maflot/bio-crayon/main/community_colormaps&quot;</span>
+        <span class="n">colormap_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.json&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">community_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">available_categories</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;community_colormaps&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
-            <span class="p">]</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Community colormap &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in category &#39;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Available categories: </span><span class="si">{</span><span class="n">available_categories</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Fetch the colormap from GitHub</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">colormap_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="n">colormap_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># If not found, get available categories for better error message</span>
+            <span class="n">available_categories</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">list_community_colormaps</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">available_categories</span><span class="p">:</span>
+                <span class="n">category_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">available_categories</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Community colormap &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in category &#39;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Available categories: </span><span class="si">{</span><span class="n">category_list</span><span class="si">}</span><span class="s2">. Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Community colormap &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in category &#39;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;No community colormaps available. Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
-        <span class="c1"># Load the colormap and enforce metadata requirements</span>
-        <span class="c1"># Load the colormap and enforce metadata requirements</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">community_path</span><span class="p">,</span> <span class="n">require_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="c1"># Create BioCrayon instance with the loaded data</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">colormap_data</span><span class="p">,</span> <span class="n">require_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
 
 
 <div class="viewcode-block" id="BioCrayon.list_community_colormaps">
@@ -1094,20 +1108,45 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dictionary mapping category names to lists of available colormap names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">community_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;community_colormaps&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">community_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># GitHub API URL to list contents of community_colormaps directory</span>
+            <span class="n">api_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/repos/maflot/bio-crayon/contents/community_colormaps&quot;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
 
-        <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">category_dir</span> <span class="ow">in</span> <span class="n">community_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">category_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                <span class="n">category_name</span> <span class="o">=</span> <span class="n">category_dir</span><span class="o">.</span><span class="n">name</span>
-                <span class="n">colormaps</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">json_file</span> <span class="ow">in</span> <span class="n">category_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">):</span>
-                    <span class="n">colormaps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">json_file</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
-                <span class="n">categories</span><span class="p">[</span><span class="n">category_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">colormaps</span><span class="p">)</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+                    <span class="n">category_name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                    <span class="c1"># Get contents of each category directory</span>
+                    <span class="n">category_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://api.github.com/repos/maflot/bio-crayon/contents/community_colormaps/</span><span class="si">{</span><span class="n">category_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">category_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+                    <span class="n">category_response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">categories</span></div>
+                    <span class="n">colormaps</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">file_item</span> <span class="ow">in</span> <span class="n">category_response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">file_item</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span> <span class="ow">and</span> <span class="n">file_item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                            <span class="s2">&quot;.json&quot;</span>
+                        <span class="p">):</span>
+                            <span class="n">colormaps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">colormaps</span><span class="p">:</span>  <span class="c1"># Only add categories that have JSON files</span>
+                        <span class="n">categories</span><span class="p">[</span><span class="n">category_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">colormaps</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">categories</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="c1"># Fallback: return known categories if API fails</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;allen_brain&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single_cell&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;allen_immune&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single_cell&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;cell_biology&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;fluorescent_proteins&quot;</span><span class="p">,</span> <span class="s2">&quot;organelles&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;ecology&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;biodiversity&quot;</span><span class="p">,</span> <span class="s2">&quot;habitat_types&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;genomics&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;expression_heatmaps&quot;</span><span class="p">,</span> <span class="s2">&quot;quality_scores&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;imaging&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;he_staining&quot;</span><span class="p">,</span> <span class="s2">&quot;ihc_markers&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;neuroscience&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;pbmc_adrc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;adrc&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;PBMCPedia&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="BioCrayon.contribute_colormap">

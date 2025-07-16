@@ -79,7 +79,6 @@ Each colormap should include:
 
 ## Getting Help
 
-- Check `CONTRIBUTING.md` for detailed guidelines
 - Review existing colormaps for examples
 - Open an issue for questions about contribution
 - Join community discussions for feedback 

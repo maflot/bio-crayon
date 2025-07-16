@@ -9,6 +9,7 @@ from typing import Dict, Any, List, Union, Optional, Tuple
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
+import requests
 
 from .utils import (
     load_from_file,
@@ -908,21 +909,34 @@ class BioCrayon:
             FileNotFoundError: If colormap doesn't exist in community collection
             ValueError: If colormap data is invalid
         """
-        # Construct path to community colormap
-        community_path = Path("community_colormaps") / category / f"{name}.json"
+        # GitHub repository URL for community colormaps
+        base_url = "https://raw.githubusercontent.com/maflot/bio-crayon/main/community_colormaps"
+        colormap_url = f"{base_url}/{category}/{name}.json"
 
-        if not community_path.exists():
-            available_categories = [
-                d.name for d in Path("community_colormaps").iterdir() if d.is_dir()
-            ]
-            raise FileNotFoundError(
-                f"Community colormap '{name}' not found in category '{category}'. "
-                f"Available categories: {available_categories}"
-            )
+        try:
+            # Fetch the colormap from GitHub
+            response = requests.get(colormap_url, timeout=10)
+            response.raise_for_status()
+            colormap_data = response.json()
+        except requests.RequestException as e:
+            # If not found, get available categories for better error message
+            available_categories = cls.list_community_colormaps()
+            if available_categories:
+                category_list = list(available_categories.keys())
+                raise FileNotFoundError(
+                    f"Community colormap '{name}' not found in category '{category}'. "
+                    f"Available categories: {category_list}. Error: {str(e)}"
+                )
+            else:
+                raise FileNotFoundError(
+                    f"Community colormap '{name}' not found in category '{category}'. "
+                    f"No community colormaps available. Error: {str(e)}"
+                )
 
-        # Load the colormap and enforce metadata requirements
-        # Load the colormap and enforce metadata requirements
-        return cls(community_path, require_metadata=True)
+        # Create BioCrayon instance with the loaded data
+        instance = cls()
+        instance.load(colormap_data, require_metadata=True)
+        return instance
 
     @classmethod
     def list_community_colormaps(cls) -> Dict[str, List[str]]:
@@ -932,20 +946,45 @@ class BioCrayon:
         Returns:
             Dictionary mapping category names to lists of available colormap names
         """
-        community_dir = Path("community_colormaps")
-        if not community_dir.exists():
-            return {}
+        try:
+            # GitHub API URL to list contents of community_colormaps directory
+            api_url = "https://api.github.com/repos/maflot/bio-crayon/contents/community_colormaps"
+            response = requests.get(api_url, timeout=10)
+            response.raise_for_status()
 
-        categories = {}
-        for category_dir in community_dir.iterdir():
-            if category_dir.is_dir():
-                category_name = category_dir.name
-                colormaps = []
-                for json_file in category_dir.glob("*.json"):
-                    colormaps.append(json_file.stem)
-                categories[category_name] = sorted(colormaps)
+            categories = {}
+            for item in response.json():
+                if item["type"] == "dir":
+                    category_name = item["name"]
+                    # Get contents of each category directory
+                    category_url = f"https://api.github.com/repos/maflot/bio-crayon/contents/community_colormaps/{category_name}"
+                    category_response = requests.get(category_url, timeout=10)
+                    category_response.raise_for_status()
 
-        return categories
+                    colormaps = []
+                    for file_item in category_response.json():
+                        if file_item["type"] == "file" and file_item["name"].endswith(
+                            ".json"
+                        ):
+                            colormaps.append(file_item["name"].replace(".json", ""))
+
+                    if colormaps:  # Only add categories that have JSON files
+                        categories[category_name] = sorted(colormaps)
+
+            return categories
+        except requests.RequestException:
+            # Fallback: return known categories if API fails
+            return {
+                "allen_brain": ["single_cell"],
+                "allen_immune": ["single_cell"],
+                "cell_biology": ["fluorescent_proteins", "organelles"],
+                "ecology": ["biodiversity", "habitat_types"],
+                "genomics": ["expression_heatmaps", "quality_scores"],
+                "imaging": ["he_staining", "ihc_markers"],
+                "neuroscience": [],
+                "pbmc_adrc": ["adrc"],
+                "PBMCPedia": [],
+            }
 
     def contribute_colormap(
         self, name: str, category: str, metadata: Dict[str, Any]

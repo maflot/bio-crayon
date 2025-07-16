@@ -147,7 +147,7 @@ pip install bio-crayon
 FOR NOW:
 ### From Source
 ```bash
-git clone https://github.com/yourusername/bio-crayon.git
+git clone https://github.com/maflot/bio-crayon.git
 cd bio-crayon
 pip install -e .
 ```
@@ -167,6 +167,54 @@ print(color)  # "#5480A3"
 
 # Convert to matplotlib
 cmap = bc.to_matplotlib("immune_expression")
+```
+
+### Community Colormaps: List, Load, and Plot
+```python
+import bio_crayon as bc
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+
+# List all available community colormaps by category
+print("Available community colormaps:")
+community = bc.BioCrayon.list_community_colormaps()
+for category, colormaps in community.items():
+    print(f"  {category}: {colormaps}")
+
+# Load a specific community colormap (e.g., Allen Brain single cell)
+allen_bc = bc.BioCrayon.from_community("allen_brain", "single_cell")
+print("\nLoaded colormaps in 'allen_brain/single_cell':")
+print(allen_bc.list_colormaps())
+
+# Access a specific colormap and print its categories (if categorical)
+colormap_name = allen_bc.list_colormaps()[0]
+colormap = allen_bc.get_colormap(colormap_name)
+if colormap["type"] == "categorical":
+    print(f"\nCategories in '{colormap_name}':")
+    categories = list(colormap["colors"].keys())
+    print(categories)
+
+    # Convert hex colors to RGB for plotting
+    colors = [mcolors.to_rgb(colormap["colors"][cat]) for cat in categories]
+    color_array = [colors]
+
+    fig, ax = plt.subplots(figsize=(max(6, len(categories)), 1))
+    ax.imshow(color_array, aspect="auto")
+    ax.set_xticks(range(len(categories)))
+    ax.set_xticklabels(categories, rotation=45, ha="right", fontsize=8)
+    ax.set_yticks([])
+    ax.set_title(f"Colormap: {colormap_name}")
+    plt.tight_layout()
+    plt.show()
+else:
+    print(f"\n'{colormap_name}' is a continuous colormap.")
+    cmap = allen_bc.to_matplotlib(colormap_name)
+    fig, ax = plt.subplots(figsize=(8, 1))
+    gradient = [list(range(256))]
+    ax.imshow(gradient, aspect="auto", cmap=cmap)
+    ax.set_axis_off()
+    ax.set_title(f"Colormap: {colormap_name}")
+    plt.show()
 ```
 
 ### User Colormaps
