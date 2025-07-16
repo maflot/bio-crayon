@@ -2,7 +2,7 @@
 
 ![BioCrayon Logo](logo_small.png)    
 
-# BioCrayon
+# BioCrayon [WORK IN PROGRESS]
 ![pypi](https://img.shields.io/pypi/v/bio-crayon)
 
 A community-driven Python package for managing biological data colormaps with support for both categorical and continuous color mappings.
@@ -412,8 +412,8 @@ https://github.com/maflot/bio-crayon
 
 ## Links
 
-- **Documentation**: [Coming soon]
-- **PyPI**: [Coming soon]
+- **Documentation**: https://maflot.github.io/bio-crayon/#
+- **PyPI**: https://pypi.org/project/bio-crayon/
 - **GitHub**: https://github.com/maflot/bio-crayon
 - **Issues**: https://github.com/maflot/bio-crayon/issues
 - **Discussions**: https://github.com/maflot/bio-crayon/discussions
