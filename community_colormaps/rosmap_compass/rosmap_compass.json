@@ -1,0 +1,103 @@
+{
+    "metadata": {
+      "name": "ROSMAP COMPASS",
+      "version": "1.0.0",
+      "description": "ROSMAP COMPASS colormaps",
+      "author": "Matthias Flotho",
+      "source": "None",
+      "doi": "None",
+      "paper_title": "In preparation",
+      "year": 2025,
+      "journal": "In preparation",
+      "keywords": [
+        "single-cell",
+        "atlas",
+        "sex-specific"
+      ],
+      "use_case": "ROSMAP COMPASS colormaps",
+      "accessibility": {
+        "colorblind_safe": false,
+        "tested_types": ["None"],
+        "contrast_ratio": "None"
+      },
+      "data_source": "Peripheral blood mononuclear cells (PBMC) single-cell RNA sequencing data"
+    },
+    "colormaps": {
+      "sex": {
+        "type": "categorical",
+        "description": "Sex-specific color coding for male and female samples",
+        "colors": {
+          "M": "#4B7837",
+          "F": "#983A94",
+          "Male": "#4B7837",
+          "Female": "#983A94",
+          "male": "#4B7837",
+          "female": "#983A94",
+          "0": "#983A94",
+          "1": "#4B7837"
+        }
+      },
+      "study": {
+      "type": "categorical",
+      "description": "Dataset color mapping from single-cell analysis visualization",
+      "colors": {
+        "Fujita 2024": "#A4DBD2",
+        "Mathys 2023": "#CBC7E1",
+        "Mathys 2024": "#99C0DB",
+        "Blanchard 2022": "#FDD7EA",
+        "MULTIOME": "#C999CA",
+        "AMPAD": "#FFF08C"
+      }
+    },
+    "braak":{
+      "type": "categorical",
+      "description": "Braak staging",
+      "colors": {
+        "0.0": "#0b0405",
+        "1.0": "#332345",
+        "2.0": "#40498e",
+        "3.0": "#357ba3",
+        "4.0": "#38aaac",
+        "5.0": "#79d6ae",
+        "6.0": "#def5e5",
+        "nan": "#CCCCCC"
+      }
+    },
+    "cerad":{
+      "type": "categorical",
+      "description": "CERAD staging",
+      "colors": {
+        "1.0": "#0d0887",
+        "2.0": "#9c179e",
+        "3.0": "#ed7953",
+        "4.0": "#f0f921",
+        "nan": "#CCCCCC"
+      }
+    },
+    "apoe":{
+      "type": "categorical",
+      "description": "APOE genotype",
+      "colors": {
+        "22.0": "#440154",
+        "23.0": "#414487",
+        "24.0": "#2a788e",
+        "33.0": "#22a884",
+        "34.0": "#7ad151",
+        "44.0": "#fde725",
+        "nan": "#CCCCCC"
+      }
+    },
+    "overlap": {
+      "type": "categorical",
+      "description": "Color scheme for donor study participation overlap analysis",
+      "colors": {
+        "0": "#888888",
+        "1": "#2B83BA", 
+        "2": "#FDAE61",
+        "3": "#D7191C",
+        "4": "#8B0000",
+        "5": "#800080"
+      }
+    }
+  }
+}

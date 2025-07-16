@@ -178,3 +178,5 @@ test_allen_immune_colormaps.py
 fix_json_schema.py
 # ignore all json files in community_colormaps
 community_colormaps/*.json
+
+community_colormaps/rosmap_compass/rosmap_compass.json
