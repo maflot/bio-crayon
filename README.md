@@ -410,6 +410,69 @@ Matthias Flotho, 2025
 https://github.com/maflot/bio-crayon
 ```
 
+## Development
+
+### Setup Development Environment
+```bash
+# Clone the repository
+git clone https://github.com/maflot/bio-crayon.git
+cd bio-crayon
+
+# Install in development mode
+make install-dev
+
+# Run tests
+make test
+
+# Format code
+make format
+
+# Run linting
+make lint
+```
+
+### Release Process
+
+The project uses automated versioning and releases. To create a new release:
+
+1. **Patch Release** (bug fixes):
+   ```bash
+   make release-patch
+   ```
+
+2. **Minor Release** (new features):
+   ```bash
+   make release-minor
+   ```
+
+3. **Major Release** (breaking changes):
+   ```bash
+   make release-major
+   ```
+
+4. **Dry Run** (see what would be done):
+   ```bash
+   make dry-run-patch
+   ```
+
+The release process will:
+- Bump the version number in `pyproject.toml`
+- Create a git commit and tag
+- Push the tag to GitHub
+- Trigger GitHub Actions to build and publish to PyPI
+
+### Available Make Commands
+```bash
+make help          # Show all available commands
+make install       # Install package in development mode
+make install-dev   # Install with development dependencies
+make test          # Run tests
+make lint          # Run linting checks
+make format        # Format code with black
+make clean         # Clean build artifacts
+make build         # Build the package
+```
+
 ## Links
 
 - **Documentation**: [Coming soon]
